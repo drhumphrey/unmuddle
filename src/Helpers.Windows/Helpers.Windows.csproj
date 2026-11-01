@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="FlaUI.UIA3" Version="5.0.0" />
-    <PackageReference Include="NAudio" Version="3.1.0" />
+    <PackageReference Include="NAudio" Version="3.3.0" />
   </ItemGroup>
 
   <PropertyGroup>
