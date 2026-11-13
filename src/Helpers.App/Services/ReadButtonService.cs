@@ -31,6 +31,10 @@ public sealed class ReadButtonService : IDisposable
     private PointerShape _pressedPointer;
     private DateTime? _pausedUntil;
 
+    /// <summary>Key presses closer together than this, after the shortcut, are the shortcut still being held.</summary>
+    private const int ShortcutKeysSettleMs = 350;
+    private long? _ignoreKeysSince;
+
     public ReadButtonService(InputMonitor input, SettingsStore settings, ReadingController reading, ISelectionSource selection, ToastService toasts, ComposeController compose)
     {
         _input = input;
@@ -51,7 +55,39 @@ public sealed class ReadButtonService : IDisposable
         input.MouseDown += OnMouseDown;
         input.MouseUp += OnMouseUp;
         input.Wheel += () => _detector.Wheel();
-        input.KeyPressed += () => _detector.KeyPressed();
+        input.KeyPressed += OnKeyPressed;
+    }
+
+    /// <summary>
+    /// Shows the button at the mouse because the user asked for it with the
+    /// shortcut. Read, Edit and Paste then act on the window in front.
+    /// </summary>
+    public void ShowOnRequest()
+    {
+        var (x, y) = CursorPosition.Get();
+        _pendingPoint = new GesturePoint(x, y);
+        _pendingWindow = ForegroundWindow.Handle;
+
+        // The shortcut's own keys are still down, and repeat while held. They mustn't hide what they just showed.
+        _ignoreKeysSince = Environment.TickCount64;
+        ShowPill(TimeSpan.FromSeconds(6));
+    }
+
+    private void OnKeyPressed()
+    {
+        if (_ignoreKeysSince is { } since)
+        {
+            var now = Environment.TickCount64;
+            if (now - since < ShortcutKeysSettleMs)
+            {
+                _ignoreKeysSince = now;
+                return;
+            }
+
+            _ignoreKeysSince = null;
+        }
+
+        _detector.KeyPressed();
     }
 
     public bool IsPaused => _pausedUntil is { } until && until > DateTime.UtcNow;
@@ -98,7 +134,7 @@ public sealed class ReadButtonService : IDisposable
 
     private void OnSelectionMade(GesturePoint point)
     {
-        if (!_settings.Current.ReadButtonEnabled || IsPaused)
+        if (!_settings.Current.ReadButtonAfterSelection || IsPaused)
         {
             return;
         }
@@ -137,12 +173,14 @@ public sealed class ReadButtonService : IDisposable
         _showTimer.Start();
     }
 
-    private void ShowPill()
+    private void ShowPill() => ShowPill(TimeSpan.FromSeconds(3));
+
+    private void ShowPill(TimeSpan life)
     {
         _showTimer.Stop();
         _pill ??= CreatePill();
         var canPaste = !string.IsNullOrEmpty(ClipboardText.TryGet());
-        _pill.ShowAt(new PixelPoint(_pendingPoint.X, _pendingPoint.Y), TimeSpan.FromSeconds(3), canPaste);
+        _pill.ShowAt(new PixelPoint(_pendingPoint.X, _pendingPoint.Y), life, canPaste);
     }
 
     /// <summary>Shows the pill at the mouse as if a selection had just been made. A dev switch, for looking at it.</summary>

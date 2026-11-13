@@ -99,6 +99,10 @@ public sealed class ToastService
     public ToastItem Offer(string text, string actionLabel, Action action) =>
         Show(ToastKind.Info, text, actionLabel, action, TimeSpan.FromSeconds(6));
 
+    /// <summary>News worth a proper read, with one button: stays a good while, then fades. Not an error.</summary>
+    public ToastItem Notice(string text, string actionLabel, Action action) =>
+        Show(ToastKind.Info, text, actionLabel, action, TimeSpan.FromSeconds(20));
+
     public void Dismiss(ToastItem item) => Dispatcher.UIThread.Post(() => Remove(item));
 
     private ToastItem Show(ToastKind kind, string text, string? actionLabel, Action? action, TimeSpan? life)

@@ -27,6 +27,7 @@ public sealed class SettingsViewModel : ObservableObject
     private readonly Action _applyLook;
     private readonly Func<bool> _applyHotkey;
     private readonly Func<bool> _applyComposeHotkey;
+    private readonly Func<bool> _applyReadButtonHotkey;
     private readonly Action _applyReadableText;
     private readonly Func<bool, bool> _setStartWithWindows;
 
@@ -48,7 +49,10 @@ public sealed class SettingsViewModel : ObservableObject
     private int _hideAfterSeconds;
     private int _unloadAfterMinutes;
     private Choice<MessageScreen> _messagesOn;
-    private bool _readButtonEnabled;
+    private bool _readButtonAfterSelection;
+    private string _readButtonHotkeyText = string.Empty;
+    private bool _readButtonHotkeyEnabled;
+    private string _readButtonHotkeyStatus = string.Empty;
     private int _readButtonDelayMs;
     private string _excludedApps = string.Empty;
     private string _hotkeyText = string.Empty;
@@ -81,6 +85,7 @@ public sealed class SettingsViewModel : ObservableObject
         Action applyLook,
         Func<bool> applyHotkey,
         Func<bool> applyComposeHotkey,
+        Func<bool> applyReadButtonHotkey,
         Action applyReadableText,
         Func<bool, bool> setStartWithWindows,
         bool startWithWindowsNow,
@@ -96,6 +101,7 @@ public sealed class SettingsViewModel : ObservableObject
         _applyLook = applyLook;
         _applyHotkey = applyHotkey;
         _applyComposeHotkey = applyComposeHotkey;
+        _applyReadButtonHotkey = applyReadButtonHotkey;
         _applyReadableText = applyReadableText;
         _setStartWithWindows = setStartWithWindows;
 
@@ -181,7 +187,9 @@ public sealed class SettingsViewModel : ObservableObject
         _messagesOn = MessageScreens.First(m => m.Value == settings.MessagesOn);
         _watchClipboardOn = settings.WatchClipboard;
 
-        _readButtonEnabled = settings.ReadButtonEnabled;
+        _readButtonAfterSelection = settings.ReadButtonAfterSelection;
+        _readButtonHotkeyText = settings.ReadButtonHotkey;
+        _readButtonHotkeyEnabled = settings.ReadButtonHotkeyEnabled;
         _readButtonDelayMs = settings.ReadButtonDelayMs;
         _excludedApps = string.Join(", ", settings.ExcludedApps);
         _hotkeyText = settings.ReadSelectionHotkey;
@@ -691,16 +699,67 @@ public sealed class SettingsViewModel : ObservableObject
 
     // Read button and shortcut
 
-    public bool ReadButtonEnabled
+    public bool ReadButtonAfterSelection
     {
-        get => _readButtonEnabled;
+        get => _readButtonAfterSelection;
         set
         {
-            if (Set(ref _readButtonEnabled, value))
+            if (Set(ref _readButtonAfterSelection, value))
             {
-                _store.Update(s => s.ReadButtonEnabled = value);
+                _store.Update(s => s.ReadButtonAfterSelection = value);
             }
         }
+    }
+
+    public string ReadButtonHotkeyText
+    {
+        get => _readButtonHotkeyText;
+        set
+        {
+            var gesture = Helpers.Core.Input.HotkeyGesture.Parse(value);
+            if (gesture is null)
+            {
+                ReadButtonHotkeyStatus = "That isn't a shortcut. Try something like Ctrl+Alt+J.";
+                return;
+            }
+
+            if (!gesture.HasModifier)
+            {
+                ReadButtonHotkeyStatus = "Add Ctrl, Alt, Shift or Win, or plain typing would trigger it.";
+                return;
+            }
+
+            if (gesture.ToString() == _hotkeyText || gesture.ToString() == _composeHotkeyText)
+            {
+                ReadButtonHotkeyStatus = "Another shortcut here already uses those keys. Pick different ones.";
+                return;
+            }
+
+            if (Set(ref _readButtonHotkeyText, gesture.ToString()))
+            {
+                _store.Update(s => s.ReadButtonHotkey = _readButtonHotkeyText);
+                ReadButtonHotkeyStatus = _applyReadButtonHotkey() ? string.Empty : "Windows refused that shortcut. Another app may own it.";
+            }
+        }
+    }
+
+    public bool ReadButtonHotkeyEnabled
+    {
+        get => _readButtonHotkeyEnabled;
+        set
+        {
+            if (Set(ref _readButtonHotkeyEnabled, value))
+            {
+                _store.Update(s => s.ReadButtonHotkeyEnabled = value);
+                ReadButtonHotkeyStatus = _applyReadButtonHotkey() ? string.Empty : "Windows refused that shortcut. Another app may own it.";
+            }
+        }
+    }
+
+    public string ReadButtonHotkeyStatus
+    {
+        get => _readButtonHotkeyStatus;
+        private set => Set(ref _readButtonHotkeyStatus, value);
     }
 
     public int ReadButtonDelayMs

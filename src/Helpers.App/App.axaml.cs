@@ -92,6 +92,8 @@ public partial class App : Application
             if (_input.Install())
             {
                 _readButton = new ReadButtonService(_input, _settings, _reading, _selection, _toasts, _compose);
+                ApplyReadButtonHotkey();
+                TellAboutTheReadButtonChange();
                 _input.MouseDown += (_, _, _, ours) =>
                 {
                     if (!ours)
@@ -154,7 +156,8 @@ public partial class App : Application
             _settings.Update(s =>
             {
                 s.VoiceId = voice.Id;
-                s.ReadButtonEnabled = readButton;
+                s.ReadButtonAfterSelection = readButton;
+                s.ReadButtonChangeTold = true;
                 s.FirstRunDone = true;
                 s.Updates.CheckForUpdates = updates;
                 s.Updates.Asked = true;
@@ -591,6 +594,52 @@ public partial class App : Application
         return ok;
     }
 
+    /// <summary>Registers the shortcut that shows the Read button at the mouse.</summary>
+    private bool ApplyReadButtonHotkey()
+    {
+        if (_hotkeys is null || _settings is null)
+        {
+            return false;
+        }
+
+        var settings = _settings.Current;
+        var gesture = Helpers.Core.Input.HotkeyGesture.Parse(settings.ReadButtonHotkey);
+        var ok = _hotkeys.Apply("read-button", gesture, settings.ReadButtonHotkeyEnabled, () => _readButton?.ShowOnRequest());
+        if (!ok)
+        {
+            _toasts?.Error($"Couldn't claim the Read button shortcut {settings.ReadButtonHotkey}. Another app may be using it.", "Open Settings", ShowSettings);
+        }
+
+        return ok;
+    }
+
+    /// <summary>
+    /// Up to 0.2.1 the Read button appeared after every selection. A copy from
+    /// then is told, once, that it now waits to be asked. A new copy hears it
+    /// on the welcome screen instead.
+    /// </summary>
+    private void TellAboutTheReadButtonChange()
+    {
+        if (_settings is null || _toasts is null)
+        {
+            return;
+        }
+
+        var settings = _settings.Current;
+        if (!settings.FirstRunDone || settings.ReadButtonChangeTold)
+        {
+            return;
+        }
+
+        _settings.Update(s => s.ReadButtonChangeTold = true);
+        var how = settings.ReadButtonHotkeyEnabled ? $"Press {settings.ReadButtonHotkey} when you want it." : "Give it a shortcut in Settings.";
+        _toasts.Notice($"The Read button no longer pops up after every selection. {how} Settings can bring the old way back.", "Open Settings", () =>
+        {
+            ShowSettings();
+            _settingsWindow?.SelectTab("Read button");
+        });
+    }
+
     private void ShowSettings()
     {
         if (_settings is null || _reading is null)
@@ -607,6 +656,7 @@ public partial class App : Application
                 ApplyLook,
                 ApplyReadHotkey,
                 ApplyComposeHotkey,
+                ApplyReadButtonHotkey,
                 () => ReadableText.Apply(this, _settings.Current),
                 SetStartWithWindows,
                 StartupRegistration.IsEnabled(),

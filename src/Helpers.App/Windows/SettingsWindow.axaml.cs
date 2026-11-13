@@ -128,6 +128,10 @@ public partial class SettingsWindow : ShellWindow
         {
             _viewModel.ComposeHotkeyText = text;
         }
+        else if (sender is TextBox { Name: "ReadButtonHotkeyBox" })
+        {
+            _viewModel.ReadButtonHotkeyText = text;
+        }
         else
         {
             _viewModel.HotkeyText = text;

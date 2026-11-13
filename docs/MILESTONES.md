@@ -332,3 +332,21 @@ Dave, after a month with 0.2.0 installed: the app can be started more than once,
 
 - The checkout is in a Google Drive folder again, and Git reported 15 unchanged images as modified, as on the second PC in October. Builds were sent outside it with `--artifacts-path`. It should move out of Drive.
 - Selecting text that starts and ends on a link shows the hand pointer at both ends, so the Read button won't appear there. The shortcut still reads it.
+
+## The Read button waits to be asked (13 November 2026)
+
+Dave, the same evening, with 0.2.1 installed: the button still appears near whatever is selected, and most of the time he doesn't want it. He selects to copy and paste far more often than to read, and in Illustrator, PowerPoint or Blender selecting is constant. He suggested a shortcut, or two keys and a right-click. Asked, he chose a keyboard shortcut only, and "only when asked" as the default for everyone.
+
+**Built:**
+
+- `ReadButtonAfterSelection` in settings, off by default, replaces `ReadButtonEnabled`. The old name is no longer read, so every existing copy moves to the new way on update.
+- A third global shortcut, Ctrl+Alt+J by default (`ReadButtonHotkey`), shows the button at the mouse for six seconds. Read, Edit and Paste then act on the window in front. Ctrl+Alt+B and Ctrl+Alt+M were taken on Dave's PC; J was free, and isn't an AltGr character on UK, German, Spanish or Polish keyboards.
+- The button hides on any key press, and the shortcut's own keys are still down, and repeating, when it appears. Key presses are ignored until 350 ms pass without one, so holding the shortcut can't hide what it just showed. The keyboard hook still carries no key codes.
+- A copy from before the change is told once, in a message that stays 20 seconds (`ToastService.Notice`), with Open Settings going to the Read button page. A new copy is told on the welcome screen, whose switch now reads "Show a Read button every time I select text" and starts off.
+- Settings, Read button page: "Show when I ask" with its shortcut box first, then "Show after every selection".
+
+**Tried on Dave's PC:** 282 Core and 5 Windows tests pass. With the installed copy stopped, the new build started, held Ctrl+Alt+J, and saved the new settings with the told flag set. Settings were backed up and put back byte for byte, and the installed copy restarted.
+
+**Also learned:** the update from 0.2.0 to 0.2.1 worked on Dave's PC through Check now and Update now, the first time the whole path has run against a real release.
+
+**Not tried:** pressing Ctrl+Alt+J and using the button. No synthetic key presses on this PC, so that is Dave's to try.

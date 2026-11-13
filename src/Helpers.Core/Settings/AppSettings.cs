@@ -83,8 +83,21 @@ public sealed class AppSettings
     /// <summary>Read any new text that lands on the clipboard.</summary>
     public bool WatchClipboard { get; set; }
 
-    /// <summary>Show the Read button after a mouse selection.</summary>
-    public bool ReadButtonEnabled { get; set; } = true;
+    /// <summary>
+    /// Show the Read button by itself after every mouse selection. Off, it only
+    /// appears when asked for with <see cref="ReadButtonHotkey"/>. Up to version
+    /// 0.2.1 it always appeared (the setting was called ReadButtonEnabled), which
+    /// got in the way of selecting to copy, and in design apps.
+    /// </summary>
+    public bool ReadButtonAfterSelection { get; set; }
+
+    /// <summary>The global shortcut that shows the Read button at the mouse.</summary>
+    public string ReadButtonHotkey { get; set; } = "Ctrl+Alt+J";
+
+    public bool ReadButtonHotkeyEnabled { get; set; } = true;
+
+    /// <summary>Set once a copy from before the change has been told the Read button now waits to be asked.</summary>
+    public bool ReadButtonChangeTold { get; set; }
 
     /// <summary>How long after the selection the button appears. Leaves room for a third click.</summary>
     public int ReadButtonDelayMs { get; set; } = 180;

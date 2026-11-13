@@ -41,6 +41,10 @@ From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail i
 - The read shortcut's default is Ctrl+Alt+H. A copy still on Ctrl+Alt+Space moves across by itself when another app has that one.
 - The Read button no longer appears when opening, dragging or boxing files. Built and unit-tested; Dave still to try it in daily use.
 
+## Changed in 0.2.2
+
+- The Read button waits to be asked: Ctrl+Alt+J shows it at the mouse. Appearing after every selection is a setting, off by default. A copy from before is told once. Built, and the shortcut seen to register; Dave still to try the button itself.
+
 ## Not tried yet
 
 - **Send to chat** and **Put it back** into a real chat box, and that the clipboard is unchanged afterwards.

@@ -34,10 +34,10 @@
     <TextBlock Classes="label" Text="2. HOW TO START READING" />
     <Grid ColumnDefinitions="*,Auto" Margin="0,2">
       <StackPanel>
-        <TextBlock Text="Show a Read button when I select text" FontSize="15" />
-        <TextBlock Classes="hint" Text="A small button appears next to your mouse. Nothing is read until you click it. Ctrl+Alt+H reads a selection too." />
+        <TextBlock Text="Show a Read button every time I select text" FontSize="15" />
+        <TextBlock Classes="hint" Text="Select text and press Ctrl+Alt+H to hear it. Ctrl+Alt+J shows a small button at your mouse, with Read, Edit and Paste. Switch this on and the button appears by itself after every selection, which can get in the way." />
       </StackPanel>
-      <ToggleSwitch Grid.Column="1" x:Name="ReadButtonSwitch" IsChecked="True" OnContent="" OffContent="" VerticalAlignment="Top" Margin="12,0,0,0" />
+      <ToggleSwitch Grid.Column="1" x:Name="ReadButtonSwitch" OnContent="" OffContent="" VerticalAlignment="Top" Margin="12,0,0,0" />
     </Grid>
     <Grid ColumnDefinitions="*,Auto" Margin="0,12,0,0">
       <StackPanel>

@@ -106,6 +106,8 @@ The aim is a modern, attractive app that feels native on Windows 11 and on Mac, 
 
 ### Read button (the main trigger)
 
+**Changed 13 November 2026, by Dave after a month of daily use:** the pill no longer appears by itself. Most selections are made to copy, or are part of work in a design app, and a button near every one gets in the way. It now appears at the mouse when asked for with a shortcut, Ctrl+Alt+J by default. Appearing after every mouse selection, as described below, is a setting, off by default; the rules below apply when it's on.
+
 - **When it appears:** after a mouse text selection (drag-select, double-click or triple-click). It's a small pill near the cursor with three buttons at most, because it is clicked mid-selection: **Read** with a speaker icon; **Edit**, which opens Compose with the selected text and remembers the window it came from; and **Paste**, shown only when the clipboard holds text, which pastes over the selection. Summarise lives in the player and in Compose, not on the pill. (Changed 9 October 2026 from a single Read button, for the editing loop.)
 - **Focus:** it must never steal focus. Use a non-activating window.
 - **When it must not appear:**
@@ -181,6 +183,7 @@ Off by default and configurable. Suggested defaults:
 
 - Ctrl+Alt+H: read the current selection, or stop if already reading. (Ctrl+Alt+Space until 13 November 2026; changed at Dave's word because other apps claim it, the Claude desktop app among them.)
 - Ctrl+Alt+C: open Compose, targeting the current window.
+- Ctrl+Alt+J: show the Read button at the mouse (added 13 November 2026).
 
 Note that Ctrl+Alt is AltGr on many European keyboards, so these must be easy to change.
 

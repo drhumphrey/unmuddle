@@ -6,10 +6,11 @@ Unmuddle sits in the corner of your screen and helps you read, write and think t
 
 | You want to | Do this |
 |---|---|
-| Hear some text | Select it, then press **Read** on the button by your mouse. Or press **Ctrl+Alt+H**. |
+| Hear some text | Select it, then press **Ctrl+Alt+H**. |
+| Get the Read button | Select some text, then press **Ctrl+Alt+J**. It appears at your mouse. |
 | Stop the voice | Press **Ctrl+Alt+H** with nothing selected, or **Stop** in the player. |
 | Write a reply | Press **Ctrl+Alt+C** in the app you're writing in. Compose opens. |
-| Fix something you've already written | Select it, press **Edit**, fix it in Compose, then press **Put it back**. |
+| Fix something you've already written | Select it, press **Ctrl+Alt+J**, then **Edit**. Fix it in Compose, then press **Put it back**. |
 | Get a reader's notes on your draft | Press **Check my thinking** in Compose. |
 | Look up a word | Right-click it in Compose and choose **Look up**. |
 | Change how anything works | Click the Unmuddle icon by the clock, then **Settings**. |
@@ -23,7 +24,7 @@ The first time Unmuddle starts, it asks three things:
 <img src="images/welcome.png" width="540" alt="The welcome screen: pick a voice, choose whether to show a Read button and start with Windows, and whether to check for updates">
 
 1. **Pick a voice.** Press **Hear it** to try one. The voice downloads the first time, about 350 MB, then works offline.
-2. **How to start reading.** The Read button and starting with Windows are both up to you.
+2. **How to start reading.** Whether the Read button appears by itself after every selection, and starting with Windows, are both up to you.
 3. **Updates.** If you switch this on, Unmuddle asks GitHub once a day whether there's a newer version. Nothing else is ever sent.
 
 Press **Done**. Unmuddle now lives in the notification area by the clock. If you can't see its icon, click the small arrow there.
@@ -36,10 +37,14 @@ Right-click the icon for the same things in a plain menu.
 
 ## Hear it
 
+### With the keyboard
+
+Select text and press **Ctrl+Alt+H**. Press it again with nothing selected to stop.
+
 ### With the Read button
 
-1. Select some text in any app. Drag over it, double-click a word, or triple-click a paragraph.
-2. A small button appears next to your mouse.
+1. Select some text in any app.
+2. Press **Ctrl+Alt+J**. A small button appears at your mouse.
 3. Press **Read**.
 
 <img src="images/pill.png" width="200" alt="The Read button, with Read and Edit">
@@ -50,9 +55,7 @@ The button disappears by itself if you don't use it. It has up to three parts:
 - **Edit** opens the selection in Compose (see [Edit and put it back](#edit-and-put-it-back)).
 - **Paste** appears when you've copied some text. It pastes that text over your selection.
 
-### With the keyboard
-
-Select text and press **Ctrl+Alt+H**. Press it again with nothing selected to stop.
+Up to version 0.2.1 the button appeared by itself after every selection. That got in the way of selecting to copy, and of work in design apps, so now it waits for Ctrl+Alt+J. To have it appear by itself again, go to **Settings**, then **Read button**, and switch on **Show after every selection**.
 
 Up to version 0.2.0 this shortcut was Ctrl+Alt+Space, which other apps use too. If yours is still Ctrl+Alt+Space and another app has it, Unmuddle moves to Ctrl+Alt+H by itself and tells you. You can pick your own under **Settings**, then **Read button**.
 
@@ -79,7 +82,7 @@ If the voice says a word wrongly, teach it: go to **Settings**, then **Reading**
 Compose is a calm place to write. Open it in any of these ways:
 
 - Press **Ctrl+Alt+C** in the app you're writing in.
-- Press **Edit** on the Read button.
+- Press **Ctrl+Alt+J**, then **Edit** on the Read button.
 - Choose **Compose** from the Unmuddle menu.
 
 <img src="images/compose.png" width="640" alt="Compose: a draft with spelling underlined, and a reader's notes beside it">
@@ -97,7 +100,7 @@ Your draft saves itself as you type. Close Compose and it's still there next tim
 Use this to fix something you've half written in another app.
 
 1. Select your text in that app.
-2. Press **Edit** on the Read button.
+2. Press **Ctrl+Alt+J**, then **Edit** on the Read button.
 3. Fix it in Compose.
 4. Press **Put it back**. Your new text replaces the old selection.
 
@@ -158,7 +161,7 @@ Everything is in **Settings**. Click the Unmuddle icon, then **Settings**. Chang
 
 <img src="images/settings-reading.png" width="540" alt="The Reading page: font, text size, line spacing, background tint, what gets said, and pronunciations">
 
-**Read button:** whether the button appears, how quickly, the apps it never appears in, and the two shortcuts. Password managers are left out to start with. If a shortcut types a character instead of working, pick another: on some keyboards Ctrl+Alt is the same as AltGr.
+**Read button:** the shortcut that shows the button, whether it also appears by itself after every selection, the apps it never appears in, and the other two shortcuts. Password managers are left out to start with. If a shortcut types a character instead of working, pick another: on some keyboards Ctrl+Alt is the same as AltGr.
 
 <img src="images/settings-readbutton.png" width="540" alt="The Read button page: show after a selection, delay, apps to leave out, the shortcuts, and watch clipboard">
 
@@ -200,11 +203,11 @@ If you have version 0.1.0, install the next version by hand from the [Releases p
 
 **Starting Unmuddle again does nothing.** It's already running, and only one copy runs at a time. A message says so. Look for its icon by the clock.
 
-**The Read button doesn't appear after a selection.** It only appears when the mouse pointer was the text pointer, the thin upright bar, so it stays out of the way when you open or move files. If an app never shows it, select the text and use the shortcut.
+**The Read button doesn't appear after a selection.** It waits for **Ctrl+Alt+J**. If you've switched on **Show after every selection**, it appears by itself only when the mouse pointer was the text pointer, the thin upright bar, so it stays out of the way when you open or move files.
 
 **No red underlines in Compose.** Windows' spell checker needs the English (United Kingdom) language. Add it in Windows Settings, under **Time & language**, then **Language & region**. The line at the bottom of Compose says whether spelling is on.
 
-**The Read button doesn't appear in an app.** Check it isn't on the list under **Settings**, then **Read button**. Unmuddle never reads password boxes. It also can't read from apps that run as administrator, and it tells you when that happens.
+**The Read button doesn't appear by itself in an app.** Check it isn't on the list under **Settings**, then **Read button**. Unmuddle never reads password boxes. It also can't read from apps that run as administrator, and it tells you when that happens.
 
 **The AI takes a while the first time.** On this PC, the model loads first. After that, each press takes 10 to 20 seconds. Claude takes a few seconds.
 

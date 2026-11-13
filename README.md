@@ -26,19 +26,20 @@ It's free. It works offline. Nothing leaves your PC unless you choose a cloud fe
 
 ### Hear it
 
-Select text in any app. A small button appears next to your mouse. Press **Read**.
+Select text in any app and press **Ctrl+Alt+H**. Or press **Ctrl+Alt+J** for a small button at your mouse, with Read, Edit and Paste.
 
 ![The Read button: Read and Edit](docs/images/pill.png)
+
+The button waits until you ask for it, so it never gets in the way of selecting to copy, or of work in a design app. If you'd rather it appeared after every selection, switch that on in Settings.
 
 - Natural British voices that run on your own PC. Eight to choose from.
 - Understands the Markdown AI chats produce. Code blocks, tables and symbols aren't read out letter by letter.
 - Years, prices, times and percentages are said the way people say them.
 - The player highlights each sentence and each word as it's spoken. Open it up to see the whole reply. Click any sentence to jump there.
-- **Ctrl+Alt+H** reads whatever is selected, from the keyboard.
 
 ### Write it
 
-Press **Ctrl+Alt+C** in the app you're working in, or **Edit** on the Read button, and Compose opens.
+Press **Ctrl+Alt+C** in the app you're working in, or **Edit** on the Read button (Ctrl+Alt+J), and Compose opens.
 
 ![Compose: a draft with spelling underlined and a reader's notes beside it](docs/images/compose.png)
 

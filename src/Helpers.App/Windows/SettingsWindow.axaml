@@ -180,17 +180,27 @@
         <StackPanel Spacing="2">
           <TextBlock Classes="section" Text="READ BUTTON" />
           <Grid Classes="row" ColumnDefinitions="170,*">
-            <TextBlock Classes="label" Text="Show after a selection" />
+            <TextBlock Classes="label" Text="Show when I ask" />
             <Grid Grid.Column="1" ColumnDefinitions="Auto,*">
-              <ToggleSwitch IsChecked="{Binding ReadButtonEnabled}" OnContent="" OffContent="" />
-              <TextBlock Grid.Column="1" Margin="10,0,0,0" TextWrapping="Wrap" Classes="label" Text="A small Read button appears next to the mouse" />
+              <ToggleSwitch IsChecked="{Binding ReadButtonHotkeyEnabled}" OnContent="" OffContent="" />
+              <TextBox Grid.Column="1" Margin="10,0,0,0" x:Name="ReadButtonHotkeyBox" Text="{Binding ReadButtonHotkeyText, Mode=OneWay}" Width="220" MinHeight="32" IsReadOnly="True"
+                       KeyDown="OnHotkeyKeyDown" Watermark="Click, then press keys" ToolTip.Tip="Click here and press the keys you want" />
+            </Grid>
+          </Grid>
+          <TextBlock Classes="hint" Text="Select some text, then press these keys. The button appears at the mouse, with Read, Edit and Paste. Click the box and press new keys to change them." />
+          <TextBlock Classes="hint" Text="{Binding ReadButtonHotkeyStatus}" IsVisible="{Binding ReadButtonHotkeyStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <Grid Classes="row" ColumnDefinitions="170,*">
+            <TextBlock Classes="label" Text="Show after every selection" />
+            <Grid Grid.Column="1" ColumnDefinitions="Auto,*">
+              <ToggleSwitch IsChecked="{Binding ReadButtonAfterSelection}" OnContent="" OffContent="" />
+              <TextBlock Grid.Column="1" Margin="10,0,0,0" TextWrapping="Wrap" Classes="label" Text="The button appears by itself whenever you select text with the mouse" />
             </Grid>
           </Grid>
           <Grid Classes="row" ColumnDefinitions="170,*">
             <TextBlock Classes="label" Text="Delay" />
             <Grid Grid.Column="1" ColumnDefinitions="Auto,*">
               <NumericUpDown Minimum="0" Maximum="1000" Increment="20" Value="{Binding ReadButtonDelayMs}" Width="130" FormatString="0" />
-              <TextBlock Grid.Column="1" Margin="10,0,0,0" TextWrapping="Wrap" Classes="label" Text="milliseconds after you let go of the mouse" />
+              <TextBlock Grid.Column="1" Margin="10,0,0,0" TextWrapping="Wrap" Classes="label" Text="milliseconds after you let go of the mouse, when it appears by itself" />
             </Grid>
           </Grid>
           <Grid Classes="row" ColumnDefinitions="170,*">
