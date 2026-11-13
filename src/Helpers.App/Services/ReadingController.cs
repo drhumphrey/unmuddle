@@ -53,6 +53,24 @@ public sealed class ReadingController : IDisposable
 
     public bool IsReading => _session is { State: ReadingState.Playing or ReadingState.Paused or ReadingState.Loading };
 
+    /// <summary>True while the voice is speaking or about to: not when paused, finished or stopped.</summary>
+    public bool IsSpeaking => _session is { State: ReadingState.Playing or ReadingState.Loading };
+
+    /// <summary>Raised on the UI thread when the voice starts or stops speaking, so the tray icon can show it.</summary>
+    public event Action<bool>? SpeakingChanged;
+
+    private bool _wasSpeaking;
+
+    private void NoteSpeaking()
+    {
+        var now = IsSpeaking;
+        if (now != _wasSpeaking)
+        {
+            _wasSpeaking = now;
+            SpeakingChanged?.Invoke(now);
+        }
+    }
+
     /// <summary>Raised by the player's cog button.</summary>
     public event Action? SettingsRequested;
 
@@ -241,7 +259,11 @@ public sealed class ReadingController : IDisposable
             });
             _window.SettingsRequested += () => SettingsRequested?.Invoke();
             _window.ExpandedChanged += expanded => _settings.Update(s => s.PlayerExpanded = expanded);
-            _window.Closed += (_, _) => _window = null;
+            _window.Closed += (_, _) =>
+            {
+                _window = null;
+                Stop();
+            };
             _window.Show();
             var remembered = _settings.Current.PlayerPlacement;
             _window.PlaceAt(remembered is null ? null : new PixelPoint(remembered.X, remembered.Y));
@@ -286,6 +308,7 @@ public sealed class ReadingController : IDisposable
             return;
         }
 
+        NoteSpeaking();
         if (state is ReadingState.Finished or ReadingState.Stopped or ReadingState.Failed)
         {
             ScheduleUnload();
@@ -319,6 +342,7 @@ public sealed class ReadingController : IDisposable
         _session = null;
         _player.Detach();
         session.Stop();
+        Dispatcher.UIThread.Post(NoteSpeaking);
         await Task.WhenAny(session.Completion, Task.Delay(TimeSpan.FromSeconds(3)));
     }
 

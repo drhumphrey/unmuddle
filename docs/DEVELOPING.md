@@ -77,6 +77,7 @@ Pass these to `Unmuddle.exe`, or after `--` with `dotnet run --project src/Helpe
 | `--expanded` | Opens the player's reading view |
 | `--menu` | Shows the styled tray menu |
 | `--pill` | Shows the Read button at the mouse |
+| `--reading-icon <path>` | Saves the tray's "reading now" icon as a PNG, to look at |
 | `--compose` | Opens Compose |
 | `--compose-check`, `--compose-tidy` | Opens Compose and runs Check my thinking or Tidy on the saved draft |
 | `--lookup <word>` | Opens the word tools on a word |

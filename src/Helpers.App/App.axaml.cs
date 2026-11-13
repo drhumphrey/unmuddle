@@ -258,6 +258,10 @@ public partial class App : Application
             {
                 ShowFirstRun(_engine);
             }
+            else if (args[i] == "--reading-icon" && i + 1 < args.Length)
+            {
+                SaveReadingIcon(args[++i]);
+            }
             else if (args[i] == "--pill")
             {
                 _readButton?.ShowForPreview();
@@ -378,15 +382,77 @@ public partial class App : Application
         menu.Items.Add(new NativeMenuItemSeparator());
         menu.Items.Add(exit);
 
+        _idleIcon = new WindowIcon(AssetLoader.Open(AppIconUri));
         var tray = new TrayIcon
         {
-            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://Unmuddle/Assets/app.ico"))),
+            Icon = _idleIcon,
             ToolTipText = "Unmuddle",
             Menu = menu,
             IsVisible = true,
         };
         tray.Clicked += (_, _) => ShowQuickMenu();
+        if (_reading is not null)
+        {
+            _reading.SpeakingChanged += ShowReadingOnTheTray;
+        }
+
         return tray;
+    }
+
+    private static readonly Uri AppIconUri = new("avares://Unmuddle/Assets/app.ico");
+    private WindowIcon? _idleIcon;
+    private WindowIcon? _readingIcon;
+
+    /// <summary>While the voice is reading, the icon by the clock carries a play mark, so a hidden player is never a mystery.</summary>
+    private void ShowReadingOnTheTray(bool reading)
+    {
+        if (_tray is null)
+        {
+            return;
+        }
+
+        if (reading)
+        {
+            try
+            {
+                _readingIcon ??= new WindowIcon(DrawReadingIcon());
+            }
+            catch (Exception)
+            {
+                // No picture is no reason to stop reading: the plain icon stays.
+            }
+        }
+
+        _tray.Icon = reading && _readingIcon is not null ? _readingIcon : _idleIcon;
+        _tray.ToolTipText = reading ? "Unmuddle: reading aloud" : "Unmuddle";
+    }
+
+    /// <summary>The app icon with a play mark in its bottom-right corner, big enough to read at tray size.</summary>
+    private static Avalonia.Media.Imaging.RenderTargetBitmap DrawReadingIcon()
+    {
+        const int size = 64;
+        using var stream = AssetLoader.Open(AppIconUri);
+        using var source = new Avalonia.Media.Imaging.Bitmap(stream);
+        var target = new Avalonia.Media.Imaging.RenderTargetBitmap(new PixelSize(size, size), new Vector(96, 96));
+        using (var context = target.CreateDrawingContext())
+        {
+            context.DrawImage(source, new Rect(0, 0, size, size));
+
+            var centre = new Point(41, 41);
+            context.DrawEllipse(Avalonia.Media.Brush.Parse("#15171C"), null, centre, 23, 23);
+            context.DrawEllipse(Avalonia.Media.Brush.Parse("#B6FF3B"), null, centre, 20, 20);
+            var triangle = Avalonia.Media.Geometry.Parse("M34 30 L34 52 L53 41 Z");
+            context.DrawGeometry(Avalonia.Media.Brush.Parse("#15171C"), null, triangle);
+        }
+
+        return target;
+    }
+
+    /// <summary>A developer check: saves the tray's reading icon as a picture, to look at.</summary>
+    private static void SaveReadingIcon(string path)
+    {
+        using var icon = DrawReadingIcon();
+        icon.Save(path);
     }
 
     /// <summary>The styled menu on a left-click of the tray icon.</summary>
@@ -401,8 +467,8 @@ public partial class App : Application
         _quickMenu.SetItems(
         [
             new QuickMenuItem("Read clipboard", () => _reading.ReadClipboard()),
-            new QuickMenuItem("Pause / Resume", () => _reading.TogglePause()),
-            new QuickMenuItem("Stop", () => _reading.Stop()),
+            new QuickMenuItem("Pause / Resume", () => _reading.TogglePause()) { IsPlaying = () => _reading.IsSpeaking },
+            new QuickMenuItem("Stop", () => _reading.Stop()) { IsPlaying = () => _reading.IsSpeaking },
             new QuickMenuItem("Show player", () => _reading.ShowPlayer()),
             QuickMenuItem.Separator,
             new QuickMenuItem("Compose…", () => _compose?.Open()),

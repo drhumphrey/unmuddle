@@ -9,6 +9,9 @@ namespace Helpers.App.Overlays;
 /// <summary>One entry in the quick menu. A null action is a separator.</summary>
 public sealed record QuickMenuItem(string Text, Action? Action, Func<bool>? IsChecked = null)
 {
+    /// <summary>When this says true, the entry carries a small play mark: the voice is reading right now.</summary>
+    public Func<bool>? IsPlaying { get; init; }
+
     public static QuickMenuItem Separator { get; } = new(string.Empty, null);
 }
 
@@ -89,6 +92,19 @@ public partial class QuickMenuWindow : OverlayWindow
                 };
                 DockPanel.SetDock(tick, Dock.Right);
                 content.Children.Add(tick);
+            }
+
+            if (item.IsPlaying is not null && item.IsPlaying())
+            {
+                var play = new PathIcon
+                {
+                    Classes = { "tick" },
+                    Data = Avalonia.Media.Geometry.Parse("M8 5v14l11-7z"),
+                    Margin = new Thickness(8, 0, 0, 0),
+                };
+                ToolTip.SetTip(play, "Reading aloud now");
+                DockPanel.SetDock(play, Dock.Right);
+                content.Children.Add(play);
             }
 
             content.Children.Add(new TextBlock { Text = item.Text, VerticalAlignment = VerticalAlignment.Center });

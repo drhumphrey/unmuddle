@@ -65,7 +65,9 @@ While Unmuddle reads, the player shows the sentence it's on and highlights each 
 
 <img src="images/player-mini.png" width="610" alt="The small player: play or pause, back, forward, stop, the current sentence, speed, voice, reading view, settings and hide">
 
-From left to right: **play or pause**, **back one sentence**, **forward one sentence**, **stop**, then the speed, the voice, **the reading view**, Settings and **hide**.
+From left to right: **play or pause**, **back one sentence**, **forward one sentence**, **stop**, then the speed, the voice, **the reading view**, Settings and **close**. Closing the player stops the voice too.
+
+While the voice is reading, the Unmuddle icon by the clock shows a small play mark. The Unmuddle menu shows the same mark beside **Pause / Resume** and **Stop**.
 
 Open the reading view to see the whole text. The current sentence and word are highlighted. Click any sentence to jump to it.
 

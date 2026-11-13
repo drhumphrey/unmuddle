@@ -49,6 +49,11 @@ From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail i
 
 - Updates has its own page in Settings, out of Privacy and licences. The guide's pictures of the Settings pages need retaking: the Read button, Updates and Privacy pages have all changed.
 
+## Changed in 0.2.5
+
+- Closing the player stops the voice. Built; Dave still to try it.
+- A play mark on the tray icon, and in the Unmuddle menu, while the voice is reading. The icon was drawn and looked at; the tray and the menu themselves are Dave's to check.
+
 ## Not tried yet
 
 - **Send to chat** and **Put it back** into a real chat box, and that the clipboard is unchanged afterwards.

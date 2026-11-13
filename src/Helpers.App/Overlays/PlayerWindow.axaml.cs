@@ -189,7 +189,12 @@ public partial class PlayerWindow : OverlayWindow
 
     private void OnToggleExpand(object? sender, RoutedEventArgs e) => SetExpanded(!_viewModel.IsExpanded);
 
-    private void OnHide(object? sender, RoutedEventArgs e) => Hide();
+    /// <summary>Closing the player stops the voice: with the player gone there's nothing left on screen to stop it with.</summary>
+    private void OnHide(object? sender, RoutedEventArgs e)
+    {
+        _viewModel.Stop();
+        Hide();
+    }
 
     private void OnSegmentPressed(object? sender, PointerPressedEventArgs e)
     {

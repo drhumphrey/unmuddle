@@ -366,3 +366,18 @@ All three shortcuts were already changeable: Settings, Read button page, click t
 **Tried on Dave's PC:** 283 Core and 5 Windows tests pass. The new build, started on Dave's settings with Ctrl+Alt+J saved, held Ctrl+Alt+D, let Ctrl+Alt+J go, and saved the new shortcut. Settings put back byte for byte afterwards.
 
 **Not changed:** reading stays on Ctrl+Alt+H, which is a stretch for one hand. Dave to say whether that one should move too.
+## Closing the player stops the voice (13 November 2026)
+
+Dave: close the player while it's reading and the voice carries on, with nothing left on screen to stop it. The cross on the player only hid the window. It now stops the reading first, and its tooltip says "Stop and close". The controller also stops the reading if the player window is ever closed outright. Show player from the menu brings the player back with the same text, and Play starts it again from the top.
+
+**Not tried:** by ear. Built, and the tests pass; Dave to try it.
+## A play mark while reading (13 November 2026)
+
+Dave: the pop-up by the clock should show a little play icon when something is being read back. Asked where, he chose both places.
+
+- **The tray icon.** While the voice is speaking or loading, the icon carries a lime circle with a dark play triangle in its bottom-right corner, and its tooltip says "Unmuddle: reading aloud". Paused, finished or stopped, it goes back. The icon is drawn once from the app icon (`DrawReadingIcon` in `App`), not shipped as a file. `ReadingController` raises `SpeakingChanged` for it.
+- **The Unmuddle menu.** Pause / Resume and Stop carry the same play mark, on the right, while the voice is reading. The plain right-click menu is unchanged.
+
+**Tried on Dave's PC:** `--reading-icon` saved the icon as a picture: the app icon decodes and the mark is clear at 64 pixels. Settings were backed up, the voice muted for the run, and the settings put back byte for byte.
+
+**Not tried:** the icon in the tray itself at its real size, and the menu while reading. The tray isn't one of the app's own windows, so no picture was taken of it.
