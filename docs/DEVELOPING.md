@@ -85,14 +85,14 @@ Pass these to `Unmuddle.exe`, or after `--` with `dotnet run --project src/Helpe
 | `--first-run` | Shows the welcome screen |
 | `--ai-test <in> <out>` | Downloads the local model if needed, runs Check my thinking and Tidy on a file, and writes the answers, timings and memory use to another file. Uses its own temporary settings. |
 
-Only one copy of the app can hold the shortcuts. Stop the running copy before starting another, or the second one's shortcuts fail.
+Only one copy of the app runs at a time (`SingleInstance`). A second copy tells the first, which shows a message, and closes straight away, switches and all. Stop the running copy, the installed one included, before starting a development copy. Version 0.2.0 and earlier don't know the rule, so a newer copy will start beside one of those and they will fight over the shortcuts.
 
 ## Checking each part by hand
 
 | Part | How to check |
 |---|---|
-| Reading | Select text in Outlook, Chrome, VS Code and Teams; press Ctrl+Alt+Space; the clipboard must be unchanged afterwards. |
-| Read button | Drag-select, double-click and triple-click; it must not appear for window drags, file drags, scrollbars or the Snipping Tool. |
+| Reading | Select text in Outlook, Chrome, VS Code and Teams; press Ctrl+Alt+H; the clipboard must be unchanged afterwards. |
+| Read button | Drag-select, double-click and triple-click; it must not appear for window drags, file drags, scrollbars or the Snipping Tool, nor for opening a file with a double-click or dragging a box around files. |
 | Compose | Type three misspellings; right-click one and fix it; Read back; Ctrl+Alt+C from VS Code's chat box, then Send to chat: the text lands, nothing is submitted, the clipboard is unchanged. |
 | Edit and Put it back | Select your own text anywhere, Edit, change it, Put it back: the original selection is replaced. |
 | AI helper | `--ai-test` on a draft, then the buttons in Compose. With a Claude key, the first cloud press must show what will be sent. |
@@ -169,6 +169,8 @@ Then delete `out/publish/win-x64/*.pdb`. With Inno Setup installed: `iscc instal
 - The clipboard must always be put back. `ClipboardSnapshot` saves every copyable format first.
 - The window in front can be the lock screen, Start or search. Those are never a target for sending text.
 - Windows' Snipping Tool overlay looks exactly like a text selection to the mouse hook. It's excluded in code.
+- So does opening a file with a double-click, or dragging a box around files. The Read button looks at the mouse pointer (`CursorShape`): the ordinary arrow when the button went down, and no I-beam when it came up, means no text was selected. Windows' standard pointers are shared handles, so this asks the other app nothing. An app that draws its own pointers is given the benefit of the doubt.
+- Ctrl+Alt+Space, the first default for reading, is also the Claude desktop app's shortcut. Windows gives a shortcut to whichever app asks first and doesn't say who has it.
 - Electron apps (VS Code, Teams, Claude desktop) give a full UI Automation tree only when they think assistive technology is running. Don't rely on it there; the clipboard route covers them.
 
 **Installer**

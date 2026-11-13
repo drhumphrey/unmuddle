@@ -77,8 +77,15 @@ public partial class App : Application
             _updates.Start();
             _compose = new ComposeController(_settings, _reading, _toasts, _assistant, _words);
             _hotkeys = new HotkeyService();
-            ApplyReadHotkey();
+            ClaimReadHotkeyAtStart();
             ApplyComposeHotkey();
+
+            // Started a second time: that copy has closed, so say this one is here.
+            if (Program.Instance is { } instance)
+            {
+                instance.StartedAgain += () => _toasts.Info("Unmuddle is already running. Its icon is by the clock.");
+                instance.Listen();
+            }
 
             // The mouse and keyboard hooks share the hotkey's message thread.
             _input = new InputMonitor(_hotkeys.Window);
@@ -498,8 +505,62 @@ public partial class App : Application
         }
     }
 
+    /// <summary>
+    /// The read shortcut at start-up. Ctrl+Alt+Space was the first default, and
+    /// other apps claim it too. A copy still on that default moves to the new
+    /// one by itself when Windows refuses the old, and says so in a message
+    /// that fades, rather than an error at every start.
+    /// </summary>
+    private void ClaimReadHotkeyAtStart()
+    {
+        if (_settings is null)
+        {
+            return;
+        }
+
+        var settings = _settings.Current;
+        var onOldDefault = settings.ReadSelectionHotkeyEnabled
+            && string.Equals(settings.ReadSelectionHotkey, AppSettings.PreviousReadSelectionHotkey, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(settings.ComposeHotkey, AppSettings.DefaultReadSelectionHotkey, StringComparison.OrdinalIgnoreCase);
+        if (!onOldDefault)
+        {
+            ApplyReadHotkey();
+            return;
+        }
+
+        if (TryApplyReadHotkey())
+        {
+            return;
+        }
+
+        _settings.Update(s => s.ReadSelectionHotkey = AppSettings.DefaultReadSelectionHotkey);
+        if (TryApplyReadHotkey())
+        {
+            _toasts?.Offer(
+                $"Another app uses {AppSettings.PreviousReadSelectionHotkey}, so reading is now {AppSettings.DefaultReadSelectionHotkey}.",
+                "Open Settings",
+                ShowSettings);
+            return;
+        }
+
+        // Neither is free: leave the choice as it was and say so.
+        _settings.Update(s => s.ReadSelectionHotkey = AppSettings.PreviousReadSelectionHotkey);
+        ApplyReadHotkey();
+    }
+
     /// <summary>Registers the read-selection shortcut from settings and tells the user if Windows refused it.</summary>
     private bool ApplyReadHotkey()
+    {
+        var ok = TryApplyReadHotkey();
+        if (!ok && _settings is not null)
+        {
+            _toasts?.Error($"Couldn't claim the shortcut {_settings.Current.ReadSelectionHotkey}. Another app may be using it.", "Open Settings", ShowSettings);
+        }
+
+        return ok;
+    }
+
+    private bool TryApplyReadHotkey()
     {
         if (_hotkeys is null || _settings is null)
         {
@@ -508,13 +569,7 @@ public partial class App : Application
 
         var settings = _settings.Current;
         var gesture = Helpers.Core.Input.HotkeyGesture.Parse(settings.ReadSelectionHotkey);
-        var ok = _hotkeys.Apply("read", gesture, settings.ReadSelectionHotkeyEnabled, () => _ = ReadSelectionAsync());
-        if (!ok)
-        {
-            _toasts?.Error($"Couldn't claim the shortcut {settings.ReadSelectionHotkey}. Another app may be using it.", "Open Settings", ShowSettings);
-        }
-
-        return ok;
+        return _hotkeys.Apply("read", gesture, settings.ReadSelectionHotkeyEnabled, () => _ = ReadSelectionAsync());
     }
 
     /// <summary>Registers the Compose shortcut. Pressed, it opens Compose sending to the window that had focus.</summary>

@@ -34,7 +34,7 @@ Select text in any app. A small button appears next to your mouse. Press **Read*
 - Understands the Markdown AI chats produce. Code blocks, tables and symbols aren't read out letter by letter.
 - Years, prices, times and percentages are said the way people say them.
 - The player highlights each sentence and each word as it's spoken. Open it up to see the whole reply. Click any sentence to jump there.
-- **Ctrl+Alt+Space** reads whatever is selected, from the keyboard.
+- **Ctrl+Alt+H** reads whatever is selected, from the keyboard.
 
 ### Write it
 

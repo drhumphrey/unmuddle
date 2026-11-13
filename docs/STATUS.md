@@ -33,6 +33,14 @@ The app is now called **Unmuddle**, "making sense of what you read and write" (1
 - The welcome screen and the Settings pages, after the fixes for text running off the edge.
 - A second PC: v0.1.0 installed and ran; the development copy builds, passes every test, and runs from the build folder.
 
+## Fixed in 0.2.1
+
+From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail in [MILESTONES.md](MILESTONES.md).
+
+- Only one copy runs at a time. Starting it again shows a message from the copy already running.
+- The read shortcut's default is Ctrl+Alt+H. A copy still on Ctrl+Alt+Space moves across by itself when another app has that one.
+- The Read button no longer appears when opening, dragging or boxing files. Built and unit-tested; Dave still to try it in daily use.
+
 ## Not tried yet
 
 - **Send to chat** and **Put it back** into a real chat box, and that the clipboard is unchanged afterwards.

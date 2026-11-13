@@ -313,3 +313,22 @@ Tagged at Dave's word, the first release as Unmuddle. The Release run passed fir
 **Checked from the second PC:** the app's update address returns 0.2.0, and so does the old Helpers address through GitHub's redirect, so a 0.1.0 copy with the check switched on will be offered it. The installer downloaded from the address in `version.json` matched its checksum. `gh attestation verify` passed: SLSA provenance from `.github/workflows/release.yml` at `refs/tags/v0.2.0` in `drhumphrey/unmuddle`. The repository's description and topics now say what Unmuddle is.
 
 **Not done, on purpose:** 0.2.0 isn't installed on the second PC, which runs the development copy; two copies would fight over the shortcuts. Install it there when the next version is ready to try the update for real.
+
+## Three fixes from daily use (13 November 2026)
+
+Dave, after a month with 0.2.0 installed: the app can be started more than once, the "Couldn't claim the shortcut" message is a nuisance, and the Read button turns up too often, when opening or moving files.
+
+**One copy at a time.** `SingleInstance` in `Helpers.Windows` holds a named event for the sign-in session. `Program.Main` claims it before anything else. A second copy finds it taken, signals it and closes; the first shows "Unmuddle is already running. Its icon is by the clock." Two tests, against real named events.
+
+**The read shortcut.** Ctrl+Alt+Space was taken on Dave's PC with Unmuddle closed. Windows doesn't say by whom; the Claude desktop app was running and uses those keys. The default is now Ctrl+Alt+H, for "hear it". Ctrl+Alt+R was the first thought and was taken on the same PC, as were several other R combinations. A copy whose saved shortcut is still Ctrl+Alt+Space tries it first at start-up; if Windows refuses, it saves Ctrl+Alt+H instead and says so in a message that fades, with Open Settings. If neither is free, the old error shows as before. A shortcut the user chose is never changed. Compose stays on Ctrl+Alt+C: the second message in Dave's first picture came from a second copy of the app, which can't happen now.
+
+**The Read button.** A double-click or a short drag counted as a selection whatever was under the mouse, so opening a file, dragging one inside a window, or dragging a box around several all brought the button up. It now looks at the mouse pointer when the button goes down and when it comes up (`CursorShape` in `Helpers.Windows`, the rule in `PointerShapes` in Core, with tests). The ordinary arrow, hand or resize pointer at the press, and no I-beam at the release, means no text. A pointer the app drew itself is allowed as before, so nothing that worked should stop.
+
+**Tried on Dave's PC:** 282 Core tests and 5 Windows tests pass. The new build was started twice with 0.2.0 running: the second copy closed within four seconds, the first stayed, the saved shortcut became Ctrl+Alt+H and Windows showed it as held. The settings file was backed up first and put back byte for byte.
+
+**Not tried:** the Read button change with a real mouse, in Explorer and in the apps on the acceptance list. Nothing sends synthetic clicks on this PC, so that is Dave's to try.
+
+**Not to plan:**
+
+- The checkout is in a Google Drive folder again, and Git reported 15 unchanged images as modified, as on the second PC in October. Builds were sent outside it with `--artifacts-path`. It should move out of Drive.
+- Selecting text that starts and ends on a link shows the hand pointer at both ends, so the Read button won't appear there. The shortcut still reads it.

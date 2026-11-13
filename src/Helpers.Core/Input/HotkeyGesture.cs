@@ -6,7 +6,7 @@ namespace Helpers.Core.Input;
 /// </summary>
 public sealed record HotkeyGesture(bool Ctrl, bool Alt, bool Shift, bool Win, string Key)
 {
-    public static HotkeyGesture Default { get; } = new(true, true, false, false, "Space");
+    public static HotkeyGesture Default { get; } = new(true, true, false, false, "H");
 
     /// <summary>True when at least one modifier is held, which a global shortcut needs so it doesn't swallow plain typing.</summary>
     public bool HasModifier => Ctrl || Alt || Shift || Win;

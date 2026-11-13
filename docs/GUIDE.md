@@ -6,8 +6,8 @@ Unmuddle sits in the corner of your screen and helps you read, write and think t
 
 | You want to | Do this |
 |---|---|
-| Hear some text | Select it, then press **Read** on the button by your mouse. Or press **Ctrl+Alt+Space**. |
-| Stop the voice | Press **Ctrl+Alt+Space** with nothing selected, or **Stop** in the player. |
+| Hear some text | Select it, then press **Read** on the button by your mouse. Or press **Ctrl+Alt+H**. |
+| Stop the voice | Press **Ctrl+Alt+H** with nothing selected, or **Stop** in the player. |
 | Write a reply | Press **Ctrl+Alt+C** in the app you're writing in. Compose opens. |
 | Fix something you've already written | Select it, press **Edit**, fix it in Compose, then press **Put it back**. |
 | Get a reader's notes on your draft | Press **Check my thinking** in Compose. |
@@ -52,7 +52,9 @@ The button disappears by itself if you don't use it. It has up to three parts:
 
 ### With the keyboard
 
-Select text and press **Ctrl+Alt+Space**. Press it again with nothing selected to stop.
+Select text and press **Ctrl+Alt+H**. Press it again with nothing selected to stop.
+
+Up to version 0.2.0 this shortcut was Ctrl+Alt+Space, which other apps use too. If yours is still Ctrl+Alt+Space and another app has it, Unmuddle moves to Ctrl+Alt+H by itself and tells you. You can pick your own under **Settings**, then **Read button**.
 
 ### The player
 
@@ -194,7 +196,11 @@ If you have version 0.1.0, install the next version by hand from the [Releases p
 
 **Windows blocks Unmuddle and doesn't offer Run anyway.** That's Smart App Control, which blocks apps that aren't code-signed. We're working on signing. Until then the only way past it is to turn Smart App Control off in Windows Security, and on some versions of Windows it can't be turned back on.
 
-**A shortcut does nothing.** Only one copy of Unmuddle can use the shortcuts. Check there isn't a second copy running. If a shortcut types a character instead, choose another under **Settings**, then **Read button**.
+**A shortcut does nothing.** Another app may be using the same keys. Choose different ones under **Settings**, then **Read button**. Do the same if a shortcut types a character instead.
+
+**Starting Unmuddle again does nothing.** It's already running, and only one copy runs at a time. A message says so. Look for its icon by the clock.
+
+**The Read button doesn't appear after a selection.** It only appears when the mouse pointer was the text pointer, the thin upright bar, so it stays out of the way when you open or move files. If an app never shows it, select the text and use the shortcut.
 
 **No red underlines in Compose.** Windows' spell checker needs the English (United Kingdom) language. Add it in Windows Settings, under **Time & language**, then **Language & region**. The line at the bottom of Compose says whether spelling is on.
 

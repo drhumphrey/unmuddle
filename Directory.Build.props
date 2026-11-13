@@ -8,7 +8,7 @@
     <Deterministic>true</Deterministic>
     <NeutralLanguage>en-GB</NeutralLanguage>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <Product>Unmuddle</Product>
     <Company>Unmuddle contributors</Company>
     <Copyright>Licensed under the GNU GPL v3</Copyright>

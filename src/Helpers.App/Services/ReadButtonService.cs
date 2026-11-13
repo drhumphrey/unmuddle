@@ -28,6 +28,7 @@ public sealed class ReadButtonService : IDisposable
     private nint _pendingWindow;
     private GesturePoint _pressedPoint;
     private GesturePoint _pendingPoint;
+    private PointerShape _pressedPointer;
     private DateTime? _pausedUntil;
 
     public ReadButtonService(InputMonitor input, SettingsStore settings, ReadingController reading, ISelectionSource selection, ToastService toasts, ComposeController compose)
@@ -81,6 +82,7 @@ public sealed class ReadButtonService : IDisposable
 
         _pressedWindow = WindowAtPoint.TopLevelHandle(point.X, point.Y);
         _pressedPoint = point;
+        _pressedPointer = CursorShape.Current();
         _detector.MouseDown(button, point, time);
     }
 
@@ -97,6 +99,12 @@ public sealed class ReadButtonService : IDisposable
     private void OnSelectionMade(GesturePoint point)
     {
         if (!_settings.Current.ReadButtonEnabled || IsPaused)
+        {
+            return;
+        }
+
+        // The ordinary arrow at both ends: opening a file, dragging one, or a box around several. Not text.
+        if (!PointerShapes.CouldBeTextSelection(_pressedPointer, CursorShape.Current()))
         {
             return;
         }

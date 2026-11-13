@@ -179,7 +179,7 @@ The menu has:
 
 Off by default and configurable. Suggested defaults:
 
-- Ctrl+Alt+Space: read the current selection, or stop if already reading.
+- Ctrl+Alt+H: read the current selection, or stop if already reading. (Ctrl+Alt+Space until 13 November 2026; changed at Dave's word because other apps claim it, the Claude desktop app among them.)
 - Ctrl+Alt+C: open Compose, targeting the current window.
 
 Note that Ctrl+Alt is AltGr on many European keyboards, so these must be easy to change.

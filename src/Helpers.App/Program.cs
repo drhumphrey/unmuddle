@@ -11,9 +11,21 @@ internal static class Program
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
+    /// <summary>This copy's claim to be the only one running. Null only in the visual designer.</summary>
+    public static SingleInstance? Instance { get; private set; }
+
     [STAThread]
     public static void Main(string[] args)
     {
+        // One copy at a time: two would fight over the shortcuts. A second copy tells the first and leaves.
+        using var instance = SingleInstance.TryClaim("Unmuddle-single-instance");
+        if (instance is null)
+        {
+            return;
+        }
+
+        Instance = instance;
+
         // The first versions were called Helpers. Before anything reads its settings, carry the
         // folders, the saved key and the start-up entry across to the Unmuddle names.
         DataFolderMigration.MoveBoth();

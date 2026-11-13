@@ -38,10 +38,20 @@ public class HotkeyGestureTests
     }
 
     [Fact]
-    public void DefaultIsCtrlAltSpace()
+    public void DefaultIsCtrlAltH()
     {
-        Assert.Equal("Ctrl+Alt+Space", HotkeyGesture.Default.ToString());
+        Assert.Equal("Ctrl+Alt+H", HotkeyGesture.Default.ToString());
         Assert.True(HotkeyGesture.Default.HasModifier);
+    }
+
+    [Fact]
+    public void ANewCopyStartsOnTheDefaultAndTheOldDefaultIsADifferentShortcut()
+    {
+        var settings = new Helpers.Core.Settings.AppSettings();
+
+        Assert.Equal(HotkeyGesture.Default, HotkeyGesture.Parse(settings.ReadSelectionHotkey));
+        Assert.NotEqual(HotkeyGesture.Default, HotkeyGesture.Parse(Helpers.Core.Settings.AppSettings.PreviousReadSelectionHotkey));
+        Assert.NotEqual(HotkeyGesture.Default, HotkeyGesture.Parse(settings.ComposeHotkey));
     }
 
     [Fact]

@@ -92,8 +92,14 @@ public sealed class AppSettings
     /// <summary>Process names, without .exe, where the Read button must never appear.</summary>
     public List<string> ExcludedApps { get; set; } = ["1Password", "Bitwarden", "KeePass", "KeePassXC", "mstsc"];
 
-    /// <summary>The global shortcut that reads the current selection, or stops reading. Text such as "Ctrl+Alt+Space".</summary>
-    public string ReadSelectionHotkey { get; set; } = "Ctrl+Alt+Space";
+    /// <summary>The read shortcut a new copy starts with. H for "hear it".</summary>
+    public const string DefaultReadSelectionHotkey = "Ctrl+Alt+H";
+
+    /// <summary>The default up to version 0.2.0. Other apps claim it too, the Claude desktop app among them.</summary>
+    public const string PreviousReadSelectionHotkey = "Ctrl+Alt+Space";
+
+    /// <summary>The global shortcut that reads the current selection, or stops reading. Text such as "Ctrl+Alt+H".</summary>
+    public string ReadSelectionHotkey { get; set; } = DefaultReadSelectionHotkey;
 
     public bool ReadSelectionHotkeyEnabled { get; set; } = true;
 
