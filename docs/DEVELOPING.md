@@ -92,7 +92,7 @@ Only one copy of the app runs at a time (`SingleInstance`). A second copy tells 
 | Part | How to check |
 |---|---|
 | Reading | Select text in Outlook, Chrome, VS Code and Teams; press Ctrl+Alt+H; the clipboard must be unchanged afterwards. |
-| Read button | Select text and press Ctrl+Alt+J: it appears at the mouse and stays while the keys are held. With "Show after every selection" on: drag-select, double-click and triple-click; it must not appear for window drags, file drags, scrollbars or the Snipping Tool, nor for opening a file with a double-click or dragging a box around files. |
+| Read button | Select text and press Ctrl+Alt+D: it appears at the mouse and stays while the keys are held. With "Show after every selection" on: drag-select, double-click and triple-click; it must not appear for window drags, file drags, scrollbars or the Snipping Tool, nor for opening a file with a double-click or dragging a box around files. |
 | Compose | Type three misspellings; right-click one and fix it; Read back; Ctrl+Alt+C from VS Code's chat box, then Send to chat: the text lands, nothing is submitted, the clipboard is unchanged. |
 | Edit and Put it back | Select your own text anywhere, Edit, change it, Put it back: the original selection is replaced. |
 | AI helper | `--ai-test` on a draft, then the buttons in Compose. With a Claude key, the first cloud press must show what will be sent. |

@@ -55,6 +55,23 @@ public class HotkeyGestureTests
     }
 
     [Fact]
+    public void TheThreeDefaultShortcutsAreAllDifferentAndTheOldOnesAreNotReused()
+    {
+        var settings = new Helpers.Core.Settings.AppSettings();
+        var read = HotkeyGesture.Parse(settings.ReadSelectionHotkey);
+        var compose = HotkeyGesture.Parse(settings.ComposeHotkey);
+        var button = HotkeyGesture.Parse(settings.ReadButtonHotkey);
+
+        Assert.NotNull(button);
+        Assert.True(button.HasModifier);
+        Assert.NotEqual(read, compose);
+        Assert.NotEqual(read, button);
+        Assert.NotEqual(compose, button);
+        Assert.NotEqual(button, HotkeyGesture.Parse(Helpers.Core.Settings.AppSettings.PreviousReadButtonHotkey));
+        Assert.Equal(Helpers.Core.Settings.AppSettings.DefaultReadButtonHotkey, button.ToString());
+    }
+
+    [Fact]
     public void PlainKeyHasNoModifier()
     {
         Assert.False(HotkeyGesture.Parse("F9")!.HasModifier);

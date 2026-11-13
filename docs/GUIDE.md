@@ -7,10 +7,10 @@ Unmuddle sits in the corner of your screen and helps you read, write and think t
 | You want to | Do this |
 |---|---|
 | Hear some text | Select it, then press **Ctrl+Alt+H**. |
-| Get the Read button | Select some text, then press **Ctrl+Alt+J**. It appears at your mouse. |
+| Get the Read button | Select some text, then press **Ctrl+Alt+D**. It appears at your mouse. |
 | Stop the voice | Press **Ctrl+Alt+H** with nothing selected, or **Stop** in the player. |
 | Write a reply | Press **Ctrl+Alt+C** in the app you're writing in. Compose opens. |
-| Fix something you've already written | Select it, press **Ctrl+Alt+J**, then **Edit**. Fix it in Compose, then press **Put it back**. |
+| Fix something you've already written | Select it, press **Ctrl+Alt+D**, then **Edit**. Fix it in Compose, then press **Put it back**. |
 | Get a reader's notes on your draft | Press **Check my thinking** in Compose. |
 | Look up a word | Right-click it in Compose and choose **Look up**. |
 | Change how anything works | Click the Unmuddle icon by the clock, then **Settings**. |
@@ -44,7 +44,7 @@ Select text and press **Ctrl+Alt+H**. Press it again with nothing selected to st
 ### With the Read button
 
 1. Select some text in any app.
-2. Press **Ctrl+Alt+J**. A small button appears at your mouse.
+2. Press **Ctrl+Alt+D**. A small button appears at your mouse.
 3. Press **Read**.
 
 <img src="images/pill.png" width="200" alt="The Read button, with Read and Edit">
@@ -55,7 +55,7 @@ The button disappears by itself if you don't use it. It has up to three parts:
 - **Edit** opens the selection in Compose (see [Edit and put it back](#edit-and-put-it-back)).
 - **Paste** appears when you've copied some text. It pastes that text over your selection.
 
-Up to version 0.2.1 the button appeared by itself after every selection. That got in the way of selecting to copy, and of work in design apps, so now it waits for Ctrl+Alt+J. To have it appear by itself again, go to **Settings**, then **Read button**, and switch on **Show after every selection**.
+Up to version 0.2.1 the button appeared by itself after every selection. That got in the way of selecting to copy, and of work in design apps, so now it waits for Ctrl+Alt+D. To have it appear by itself again, go to **Settings**, then **Read button**, and switch on **Show after every selection**.
 
 Up to version 0.2.0 this shortcut was Ctrl+Alt+Space, which other apps use too. If yours is still Ctrl+Alt+Space and another app has it, Unmuddle moves to Ctrl+Alt+H by itself and tells you. You can pick your own under **Settings**, then **Read button**.
 
@@ -82,7 +82,7 @@ If the voice says a word wrongly, teach it: go to **Settings**, then **Reading**
 Compose is a calm place to write. Open it in any of these ways:
 
 - Press **Ctrl+Alt+C** in the app you're writing in.
-- Press **Ctrl+Alt+J**, then **Edit** on the Read button.
+- Press **Ctrl+Alt+D**, then **Edit** on the Read button.
 - Choose **Compose** from the Unmuddle menu.
 
 <img src="images/compose.png" width="640" alt="Compose: a draft with spelling underlined, and a reader's notes beside it">
@@ -100,7 +100,7 @@ Your draft saves itself as you type. Close Compose and it's still there next tim
 Use this to fix something you've half written in another app.
 
 1. Select your text in that app.
-2. Press **Ctrl+Alt+J**, then **Edit** on the Read button.
+2. Press **Ctrl+Alt+D**, then **Edit** on the Read button.
 3. Fix it in Compose.
 4. Press **Put it back**. Your new text replaces the old selection.
 
@@ -205,7 +205,7 @@ If you have version 0.1.0, install the next version by hand from the [Releases p
 
 **Starting Unmuddle again does nothing.** It's already running, and only one copy runs at a time. A message says so. Look for its icon by the clock.
 
-**The Read button doesn't appear after a selection.** It waits for **Ctrl+Alt+J**. If you've switched on **Show after every selection**, it appears by itself only when the mouse pointer was the text pointer, the thin upright bar, so it stays out of the way when you open or move files.
+**The Read button doesn't appear after a selection.** It waits for **Ctrl+Alt+D**. If you've switched on **Show after every selection**, it appears by itself only when the mouse pointer was the text pointer, the thin upright bar, so it stays out of the way when you open or move files.
 
 **No red underlines in Compose.** Windows' spell checker needs the English (United Kingdom) language. Add it in Windows Settings, under **Time & language**, then **Language & region**. The line at the bottom of Compose says whether spelling is on.
 

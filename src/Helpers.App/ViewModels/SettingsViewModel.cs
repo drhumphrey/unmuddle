@@ -719,7 +719,7 @@ public sealed class SettingsViewModel : ObservableObject
             var gesture = Helpers.Core.Input.HotkeyGesture.Parse(value);
             if (gesture is null)
             {
-                ReadButtonHotkeyStatus = "That isn't a shortcut. Try something like Ctrl+Alt+J.";
+                ReadButtonHotkeyStatus = "That isn't a shortcut. Try something like Ctrl+Alt+D.";
                 return;
             }
 

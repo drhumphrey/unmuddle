@@ -92,8 +92,16 @@ public partial class App : Application
             if (_input.Install())
             {
                 _readButton = new ReadButtonService(_input, _settings, _reading, _selection, _toasts, _compose);
-                ApplyReadButtonHotkey();
+                var alreadyTold = settings.ReadButtonChangeTold;
+                var moved = ClaimReadButtonHotkeyAtStart();
                 TellAboutTheReadButtonChange();
+                if (moved && alreadyTold)
+                {
+                    _toasts.Notice(
+                        $"The Read button's shortcut is now {AppSettings.DefaultReadButtonHotkey}, so one hand can do it. You can pick your own in Settings.",
+                        "Open Settings",
+                        ShowReadButtonSettings);
+                }
                 _input.MouseDown += (_, _, _, ours) =>
                 {
                     if (!ours)
@@ -594,8 +602,53 @@ public partial class App : Application
         return ok;
     }
 
-    /// <summary>Registers the shortcut that shows the Read button at the mouse.</summary>
+    /// <summary>
+    /// The Read button's shortcut at start-up. Its first default, Ctrl+Alt+J,
+    /// needed two hands. A copy still on it moves to the new default, unless
+    /// those keys are already in use here or elsewhere. Returns true if it moved.
+    /// </summary>
+    private bool ClaimReadButtonHotkeyAtStart()
+    {
+        if (_settings is null)
+        {
+            return false;
+        }
+
+        var settings = _settings.Current;
+        static bool Same(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+        var onOldDefault = settings.ReadButtonHotkeyEnabled
+            && Same(settings.ReadButtonHotkey, AppSettings.PreviousReadButtonHotkey)
+            && !Same(settings.ReadSelectionHotkey, AppSettings.DefaultReadButtonHotkey)
+            && !Same(settings.ComposeHotkey, AppSettings.DefaultReadButtonHotkey);
+        if (onOldDefault)
+        {
+            _settings.Update(s => s.ReadButtonHotkey = AppSettings.DefaultReadButtonHotkey);
+            if (TryApplyReadButtonHotkey())
+            {
+                return true;
+            }
+
+            // Another app has the new keys: stay on the old ones.
+            _settings.Update(s => s.ReadButtonHotkey = AppSettings.PreviousReadButtonHotkey);
+        }
+
+        ApplyReadButtonHotkey();
+        return false;
+    }
+
+    /// <summary>Registers the shortcut that shows the Read button at the mouse, and says so if Windows refused it.</summary>
     private bool ApplyReadButtonHotkey()
+    {
+        var ok = TryApplyReadButtonHotkey();
+        if (!ok && _settings is not null)
+        {
+            _toasts?.Error($"Couldn't claim the Read button shortcut {_settings.Current.ReadButtonHotkey}. Another app may be using it.", "Open Settings", ShowReadButtonSettings);
+        }
+
+        return ok;
+    }
+
+    private bool TryApplyReadButtonHotkey()
     {
         if (_hotkeys is null || _settings is null)
         {
@@ -604,13 +657,13 @@ public partial class App : Application
 
         var settings = _settings.Current;
         var gesture = Helpers.Core.Input.HotkeyGesture.Parse(settings.ReadButtonHotkey);
-        var ok = _hotkeys.Apply("read-button", gesture, settings.ReadButtonHotkeyEnabled, () => _readButton?.ShowOnRequest());
-        if (!ok)
-        {
-            _toasts?.Error($"Couldn't claim the Read button shortcut {settings.ReadButtonHotkey}. Another app may be using it.", "Open Settings", ShowSettings);
-        }
+        return _hotkeys.Apply("read-button", gesture, settings.ReadButtonHotkeyEnabled, () => _readButton?.ShowOnRequest());
+    }
 
-        return ok;
+    private void ShowReadButtonSettings()
+    {
+        ShowSettings();
+        _settingsWindow?.SelectTab("Read button");
     }
 
     /// <summary>
@@ -633,11 +686,7 @@ public partial class App : Application
 
         _settings.Update(s => s.ReadButtonChangeTold = true);
         var how = settings.ReadButtonHotkeyEnabled ? $"Press {settings.ReadButtonHotkey} when you want it." : "Give it a shortcut in Settings.";
-        _toasts.Notice($"The Read button no longer pops up after every selection. {how} Settings can bring the old way back.", "Open Settings", () =>
-        {
-            ShowSettings();
-            _settingsWindow?.SelectTab("Read button");
-        });
+        _toasts.Notice($"The Read button no longer pops up after every selection. {how} Settings can bring the old way back.", "Open Settings", ShowReadButtonSettings);
     }
 
     private void ShowSettings()

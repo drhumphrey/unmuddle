@@ -26,7 +26,7 @@ It's free. It works offline. Nothing leaves your PC unless you choose a cloud fe
 
 ### Hear it
 
-Select text in any app and press **Ctrl+Alt+H**. Or press **Ctrl+Alt+J** for a small button at your mouse, with Read, Edit and Paste.
+Select text in any app and press **Ctrl+Alt+H**. Or press **Ctrl+Alt+D** for a small button at your mouse, with Read, Edit and Paste.
 
 ![The Read button: Read and Edit](docs/images/pill.png)
 
@@ -39,7 +39,7 @@ The button waits until you ask for it, so it never gets in the way of selecting 
 
 ### Write it
 
-Press **Ctrl+Alt+C** in the app you're working in, or **Edit** on the Read button (Ctrl+Alt+J), and Compose opens.
+Press **Ctrl+Alt+C** in the app you're working in, or **Edit** on the Read button (Ctrl+Alt+D), and Compose opens.
 
 ![Compose: a draft with spelling underlined and a reader's notes beside it](docs/images/compose.png)
 

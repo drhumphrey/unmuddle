@@ -355,3 +355,14 @@ Dave, the same evening, with 0.2.1 installed: the button still appears near what
 Dave, after updating twice through Settings: the update check doesn't belong in the privacy area. It now has its own page, Updates, between Start-up and Privacy and licences: the version you have, Check now with the last check time, a line on what Check now does, then the once-a-day switch with the same words as before. The Privacy and licences page keeps its sentence about update checks and points to the new page. `--settings Updates` opens it, and the screenshot script knows the page.
 
 **Not done:** the guide's pictures of the Read button, Updates and Privacy pages. They show the old layouts until the capture script is run.
+## The Read button's shortcut moves under one hand (13 November 2026)
+
+Dave, with 0.2.3 installed: Ctrl+Alt+J takes two hands, and the other hand is on the mouse, which has just made the selection. The default is now Ctrl+Alt+D: Ctrl, Alt and D all sit under the left hand. It was free on Dave's PC, as were W and F; G was taken. D isn't an AltGr character on UK, German, Spanish, French or Polish keyboards. Word uses Ctrl+Alt+D for an endnote, which a global shortcut takes over; anyone who needs that can pick other keys.
+
+A copy still on Ctrl+Alt+J moves across at start-up, unless Ctrl+Alt+D is already one of its own shortcuts or another app has it, and says so in a message that stays 20 seconds. Ctrl+Alt+J was the default for two versions over one evening, so nobody is likely to have chosen it on purpose.
+
+All three shortcuts were already changeable: Settings, Read button page, click the box and press the keys wanted.
+
+**Tried on Dave's PC:** 283 Core and 5 Windows tests pass. The new build, started on Dave's settings with Ctrl+Alt+J saved, held Ctrl+Alt+D, let Ctrl+Alt+J go, and saved the new shortcut. Settings put back byte for byte afterwards.
+
+**Not changed:** reading stays on Ctrl+Alt+H, which is a stretch for one hand. Dave to say whether that one should move too.

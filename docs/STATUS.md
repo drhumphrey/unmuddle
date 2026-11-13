@@ -43,7 +43,7 @@ From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail i
 
 ## Changed in 0.2.2
 
-- The Read button waits to be asked: Ctrl+Alt+J shows it at the mouse. Appearing after every selection is a setting, off by default. A copy from before is told once. Built, and the shortcut seen to register; Dave still to try the button itself.
+- The Read button waits to be asked: Ctrl+Alt+D shows it at the mouse. Appearing after every selection is a setting, off by default. A copy from before is told once. Built, and the shortcut seen to register; Dave still to try the button itself.
 
 ## Changed in 0.2.3
 

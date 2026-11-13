@@ -91,8 +91,14 @@ public sealed class AppSettings
     /// </summary>
     public bool ReadButtonAfterSelection { get; set; }
 
+    /// <summary>The Read button shortcut a new copy starts with. All three keys sit under the left hand, so the right can stay on the mouse.</summary>
+    public const string DefaultReadButtonHotkey = "Ctrl+Alt+D";
+
+    /// <summary>The default in versions 0.2.2 and 0.2.3. It needed two hands.</summary>
+    public const string PreviousReadButtonHotkey = "Ctrl+Alt+J";
+
     /// <summary>The global shortcut that shows the Read button at the mouse.</summary>
-    public string ReadButtonHotkey { get; set; } = "Ctrl+Alt+J";
+    public string ReadButtonHotkey { get; set; } = DefaultReadButtonHotkey;
 
     public bool ReadButtonHotkeyEnabled { get; set; } = true;
 
