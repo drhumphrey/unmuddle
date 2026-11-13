@@ -45,6 +45,10 @@ From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail i
 
 - The Read button waits to be asked: Ctrl+Alt+J shows it at the mouse. Appearing after every selection is a setting, off by default. A copy from before is told once. Built, and the shortcut seen to register; Dave still to try the button itself.
 
+## Changed in 0.2.3
+
+- Updates has its own page in Settings, out of Privacy and licences. The guide's pictures of the Settings pages need retaking: the Read button, Updates and Privacy pages have all changed.
+
 ## Not tried yet
 
 - **Send to chat** and **Put it back** into a real chat box, and that the clipboard is unchanged afterwards.

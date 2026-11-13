@@ -118,7 +118,7 @@ try {
 
     $pages = [ordered]@{
         'settings-voice' = 'Voice'; 'settings-reading' = 'Reading'; 'settings-readbutton' = 'Read button'; 'settings-look' = 'Look'
-        'settings-player' = 'Player'; 'settings-ai' = 'AI'; 'settings-startup' = 'Start-up'; 'settings-privacy' = 'Privacy and licences'
+        'settings-player' = 'Player'; 'settings-ai' = 'AI'; 'settings-startup' = 'Start-up'; 'settings-updates' = 'Updates'; 'settings-privacy' = 'Privacy and licences'
     }
     foreach ($page in $pages.GetEnumerator()) {
         # Nothing plays on these pages, so the Voice page can show an ordinary volume rather than the muted one.

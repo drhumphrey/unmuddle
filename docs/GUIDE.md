@@ -177,13 +177,15 @@ Everything is in **Settings**. Click the Unmuddle icon, then **Settings**. Chang
 
 <img src="images/settings-startup.png" width="540" alt="The Start-up page: start with Windows">
 
-**Privacy and licences:** what leaves your PC, the update check, and every part Unmuddle is built with, with its licence.
+**Updates:** which version you have, **Check now**, and whether Unmuddle checks by itself once a day.
 
-<img src="images/settings-privacy.png" width="540" alt="The Privacy and licences page: this app, updates, what leaves your PC, and the parts Unmuddle is built with">
+**Privacy and licences:** what leaves your PC, and every part Unmuddle is built with, with its licence.
+
+<img src="images/settings-privacy.png" width="540" alt="The Privacy and licences page: this app, what leaves your PC, and the parts Unmuddle is built with">
 
 ## Updates
 
-Unmuddle only looks for updates if you switch it on, on the welcome screen or under **Settings**, then **Privacy and licences**. Press **Check now** to look straight away.
+Unmuddle only looks for updates if you switch it on, on the welcome screen or under **Settings**, then **Updates**. Press **Check now** to look straight away. (Up to version 0.2.2 this was on the Privacy and licences page.)
 
 When there's a new version, a message offers it. Press **See what's new**, then:
 

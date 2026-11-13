@@ -350,3 +350,8 @@ Dave, the same evening, with 0.2.1 installed: the button still appears near what
 **Also learned:** the update from 0.2.0 to 0.2.1 worked on Dave's PC through Check now and Update now, the first time the whole path has run against a real release.
 
 **Not tried:** pressing Ctrl+Alt+J and using the button. No synthetic key presses on this PC, so that is Dave's to try.
+## Updates gets its own Settings page (13 November 2026)
+
+Dave, after updating twice through Settings: the update check doesn't belong in the privacy area. It now has its own page, Updates, between Start-up and Privacy and licences: the version you have, Check now with the last check time, a line on what Check now does, then the once-a-day switch with the same words as before. The Privacy and licences page keeps its sentence about update checks and points to the new page. `--settings Updates` opens it, and the screenshot script knows the page.
+
+**Not done:** the guide's pictures of the Read button, Updates and Privacy pages. They show the old layouts until the capture script is run.

@@ -7,7 +7,7 @@
                      x:Class="Helpers.App.Windows.SettingsWindow"
                      x:DataType="vm:SettingsViewModel"
                      Title="Unmuddle settings"
-                     Width="720" Height="760" MinWidth="640" MinHeight="560"
+                     Width="720" Height="760" MinWidth="700" MinHeight="560"
                      WindowStartupLocation="CenterScreen"
                      Padding="6,0,6,10">
 
@@ -390,6 +390,28 @@
       </ScrollViewer>
     </TabItem>
 
+    <TabItem Header="Updates">
+      <ScrollViewer Classes="page">
+        <StackPanel Spacing="6">
+          <TextBlock Classes="section" Text="YOUR VERSION" />
+          <TextBlock Classes="label" Text="{Binding CurrentVersionText}" />
+          <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
+            <Button Content="Check now" Click="OnCheckForUpdates" MinHeight="32" />
+            <TextBlock Classes="label" FontSize="13" Text="{Binding LastCheckedText}" VerticalAlignment="Center" />
+          </StackPanel>
+          <TextBlock Classes="label" Text="{Binding UpdateStatus}" IsVisible="{Binding UpdateStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Classes="label" FontSize="14" Text="Check now asks GitHub whether there's a newer version. If there is, a message offers it. Nothing installs unless you press Update now." />
+
+          <TextBlock Classes="section" Text="CHECK BY ITSELF" />
+          <Grid Classes="row" ColumnDefinitions="Auto,*">
+            <ToggleSwitch IsChecked="{Binding CheckForUpdates}" OnContent="" OffContent="" />
+            <TextBlock Grid.Column="1" Margin="10,0,0,0" Classes="label" Text="Check for a new version once a day" />
+          </Grid>
+          <TextBlock Classes="label" FontSize="14" Text="Off unless you switch it on. On, the app asks GitHub for the latest version number once a day, a while after it starts. GitHub sees your address and the app's version; nothing else is sent. A new version is offered, never installed by itself." />
+        </StackPanel>
+      </ScrollViewer>
+    </TabItem>
+
     <TabItem Header="Privacy and licences">
       <ScrollViewer Classes="page">
         <StackPanel Spacing="6">
@@ -401,21 +423,8 @@
             <Button Content="Full privacy notes" Click="OnOpenPrivacy" MinHeight="32" />
           </StackPanel>
 
-          <TextBlock Classes="section" Text="UPDATES" />
-          <Grid Classes="row" ColumnDefinitions="Auto,*">
-            <ToggleSwitch IsChecked="{Binding CheckForUpdates}" OnContent="" OffContent="" />
-            <TextBlock Grid.Column="1" Margin="10,0,0,0" Classes="label" Text="Check for a new version once a day" />
-          </Grid>
-          <TextBlock Classes="label" FontSize="14" Text="Off unless you switch it on. On, the app asks GitHub for the latest version number once a day, a while after it starts. GitHub sees your address and the app's version; nothing else is sent. A new version is offered, never installed by itself." />
-          <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="Check now" Click="OnCheckForUpdates" MinHeight="30" />
-            <TextBlock Classes="label" FontSize="13" Text="{Binding CurrentVersionText}" VerticalAlignment="Center" />
-            <TextBlock Classes="label" FontSize="13" Text="{Binding LastCheckedText}" VerticalAlignment="Center" />
-            <TextBlock Classes="label" FontSize="13" Text="{Binding UpdateStatus}" VerticalAlignment="Center" />
-          </StackPanel>
-
           <TextBlock Classes="section" Text="WHAT LEAVES YOUR PC" />
-          <TextBlock Classes="label" Text="Nothing phones home. No telemetry, no crash reports. No update checks unless you switched them on above." />
+          <TextBlock Classes="label" Text="Nothing phones home. No telemetry, no crash reports. No update checks unless you switched them on, on the Updates page." />
           <TextBlock Classes="label" Text="The voice, the local AI model and the dictionary each download once, over an encrypted connection, when you first use them, and are checked against a checksum built into the app. After that they never touch the network." />
           <TextBlock Classes="label" Text="On this PC keeps your text on this PC. The model runs on your processor and cannot use the network." />
           <TextBlock Classes="label" Text="Claude in the cloud sends your draft, and only your draft and the instructions for that button, to Anthropic, with your own key, only when you press a button with the cloud mark. What Anthropic does with it is covered by their terms, not ours." />

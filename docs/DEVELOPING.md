@@ -81,7 +81,7 @@ Pass these to `Unmuddle.exe`, or after `--` with `dotnet run --project src/Helpe
 | `--compose-check`, `--compose-tidy` | Opens Compose and runs Check my thinking or Tidy on the saved draft |
 | `--lookup <word>` | Opens the word tools on a word |
 | `--dictionary` | Downloads the dictionary data |
-| `--settings [page]` | Opens Settings, optionally on a page: `Voice`, `Reading`, `"Read button"`, `Look`, `Player`, `AI`, `Start-up`, `"Privacy and licences"` |
+| `--settings [page]` | Opens Settings, optionally on a page: `Voice`, `Reading`, `"Read button"`, `Look`, `Player`, `AI`, `Start-up`, `Updates`, `"Privacy and licences"` |
 | `--first-run` | Shows the welcome screen |
 | `--ai-test <in> <out>` | Downloads the local model if needed, runs Check my thinking and Tidy on a file, and writes the answers, timings and memory use to another file. Uses its own temporary settings. |
 
@@ -97,7 +97,7 @@ Only one copy of the app runs at a time (`SingleInstance`). A second copy tells 
 | Edit and Put it back | Select your own text anywhere, Edit, change it, Put it back: the original selection is replaced. |
 | AI helper | `--ai-test` on a draft, then the buttons in Compose. With a Claude key, the first cloud press must show what will be sent. |
 | Word tools | `--lookup necessary`: syllables, respelling, IPA, meanings and synonym chips. |
-| Updates | Needs a published release. Switch the check on, press Check now. |
+| Updates | Needs a published release. Settings, Updates page, Check now. |
 
 The full acceptance list, app by app, is in [BRIEF.md](BRIEF.md).
 
