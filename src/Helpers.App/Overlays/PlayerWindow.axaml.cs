@@ -70,7 +70,7 @@ public partial class PlayerWindow : OverlayWindow
             BuildFlecks();
         }));
         Stage.SizeChanged += (_, _) => PlaceFlecks();
-        _reducedMotion = OperatingSystem.IsWindows() && Helpers.Windows.SystemPreferences.ReducedMotion;
+        _reducedMotion = AppPlatform.Current.ReducedMotion;
         this.GetResourceObservable("HighlightBrush").Subscribe(new AnonymousObserver<object?>(value =>
         {
             _highlightMotion = CloneGradient(value);

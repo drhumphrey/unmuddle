@@ -1,45 +1,30 @@
 using Avalonia.Threading;
 using Helpers.Core.Input;
-using Helpers.Windows;
+using Helpers.Core.Platform;
 
 namespace Helpers.App.Services;
 
 /// <summary>
-/// Owns the message window and the global shortcuts, one per name: "read"
-/// for the selection, "compose" for the Compose window. Each re-registers
-/// when its setting changes.
+/// Owns the global shortcuts, one per name: "read" for the selection,
+/// "compose" for the Compose window, "read-button" for the Read button.
+/// Each re-registers when its setting changes.
 /// </summary>
 public sealed class HotkeyService : IDisposable
 {
-    private readonly MessageWindow _window = new();
+    private readonly IGlobalHotkeys _hotkeys;
     private readonly Dictionary<string, int> _ids = new(StringComparer.Ordinal);
     private readonly Dictionary<int, Action> _actions = new();
     private readonly object _sync = new();
 
-    public HotkeyService()
+    public HotkeyService(IGlobalHotkeys hotkeys)
     {
-        _window.Start();
-        _window.HotkeyPressed += id =>
-        {
-            Action? action;
-            lock (_sync)
-            {
-                _actions.TryGetValue(id, out action);
-            }
-
-            if (action is not null)
-            {
-                Dispatcher.UIThread.Post(action);
-            }
-        };
+        _hotkeys = hotkeys;
+        _hotkeys.Pressed += OnPressed;
     }
-
-    /// <summary>The message window's thread, for anything else that needs a message loop.</summary>
-    public MessageWindow Window => _window;
 
     /// <summary>
     /// Registers, or re-registers, one named shortcut. Off, missing or
-    /// modifier-less gestures just unregister. Returns false if Windows
+    /// modifier-less gestures just unregister. Returns false if the system
     /// refused the combination, usually because another app owns it.
     /// </summary>
     public bool Apply(string name, HotkeyGesture? gesture, bool enabled, Action onPressed)
@@ -50,13 +35,7 @@ public sealed class HotkeyService : IDisposable
             return true;
         }
 
-        var key = VirtualKeys.From(gesture.Key);
-        if (key == 0)
-        {
-            return false;
-        }
-
-        var id = _window.RegisterHotkey(gesture.Ctrl, gesture.Alt, gesture.Shift, gesture.Win, key);
+        var id = _hotkeys.Register(gesture);
         if (id <= 0)
         {
             return false;
@@ -78,7 +57,21 @@ public sealed class HotkeyService : IDisposable
             Unregister(name);
         }
 
-        _window.Dispose();
+        _hotkeys.Pressed -= OnPressed;
+    }
+
+    private void OnPressed(int id)
+    {
+        Action? action;
+        lock (_sync)
+        {
+            _actions.TryGetValue(id, out action);
+        }
+
+        if (action is not null)
+        {
+            Dispatcher.UIThread.Post(action);
+        }
     }
 
     private void Unregister(string name)
@@ -94,6 +87,6 @@ public sealed class HotkeyService : IDisposable
             _actions.Remove(id);
         }
 
-        _window.UnregisterHotkey(id);
+        _hotkeys.Unregister(id);
     }
 }

@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Media;
 using Helpers.App.Services;
 using Helpers.Core.Settings;
-using Helpers.Windows;
+using Helpers.Core.Platform;
 
 namespace Helpers.App;
 
@@ -12,13 +12,13 @@ internal static class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     /// <summary>This copy's claim to be the only one running. Null only in the visual designer.</summary>
-    public static SingleInstance? Instance { get; private set; }
+    public static ISingleInstance? Instance { get; private set; }
 
     [STAThread]
     public static void Main(string[] args)
     {
         // One copy at a time: two would fight over the shortcuts. A second copy tells the first and leaves.
-        using var instance = SingleInstance.TryClaim("Unmuddle-single-instance");
+        using var instance = AppPlatform.Current.TryClaimSingleInstance("Unmuddle-single-instance");
         if (instance is null)
         {
             return;
@@ -29,8 +29,7 @@ internal static class Program
         // The first versions were called Helpers. Before anything reads its settings, carry the
         // folders, the saved key and the start-up entry across to the Unmuddle names.
         DataFolderMigration.MoveBoth();
-        CredentialStore.MovePrevious(AssistantService.KeyName);
-        StartupRegistration.MovePrevious();
+        AppPlatform.Current.MoveFromPreviousName(AssistantService.KeyName);
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

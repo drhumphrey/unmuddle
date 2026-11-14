@@ -5,7 +5,6 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.Win32;
 using Helpers.App.Services;
-using Helpers.Windows;
 
 namespace Helpers.App.Overlays;
 
@@ -49,17 +48,8 @@ public class OverlayWindow : Window
     /// <summary>The screen the mouse is on, falling back to the primary one.</summary>
     public Screen? TargetScreen()
     {
-        if (OperatingSystem.IsWindows())
-        {
-            var (x, y) = CursorPosition.Get();
-            var screen = Screens.ScreenFromPoint(new PixelPoint(x, y));
-            if (screen is not null)
-            {
-                return screen;
-            }
-        }
-
-        return Screens.Primary;
+        var (x, y) = AppPlatform.Current.Pointer.Position;
+        return Screens.ScreenFromPoint(new PixelPoint(x, y)) ?? Screens.Primary;
     }
 
     /// <summary>
@@ -68,7 +58,7 @@ public class OverlayWindow : Window
     /// </summary>
     public Screen? AttentionScreen()
     {
-        if (OperatingSystem.IsWindows() && ForegroundWindow.Centre(ForegroundWindow.Handle) is var (x, y))
+        if (AppPlatform.Current.Windows is var windows && windows.Centre(windows.Foreground) is var (x, y))
         {
             var screen = Screens.ScreenFromPoint(new PixelPoint(x, y));
             if (screen is not null)
@@ -143,9 +133,9 @@ public class OverlayWindow : Window
     {
         base.OnOpened(e);
 
-        if (OperatingSystem.IsWindows() && TryGetPlatformHandle() is { } handle)
+        if (TryGetPlatformHandle() is { } handle)
         {
-            NonActivatingWindows.Apply(handle.Handle);
+            AppPlatform.Current.MakeNonActivating(handle.Handle);
         }
 
         ApplyScale(UiScale.Current);
@@ -159,12 +149,18 @@ public class OverlayWindow : Window
         }
     }
 
+    /// <summary>The message Windows sends before activating a window on a mouse click.</summary>
+    private const uint WM_MOUSEACTIVATE = 0x0021;
+
+    /// <summary>The reply to it that means "handle the click but don't activate me".</summary>
+    private const nint MA_NOACTIVATE = 3;
+
     private static nint RefuseActivation(nint hWnd, uint msg, nint wParam, nint lParam, ref bool handled)
     {
-        if (msg == NonActivatingWindows.MouseActivateMessage)
+        if (msg == WM_MOUSEACTIVATE)
         {
             handled = true;
-            return NonActivatingWindows.DoNotActivate;
+            return MA_NOACTIVATE;
         }
 
         return 0;

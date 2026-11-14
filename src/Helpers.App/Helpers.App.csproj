@@ -1,7 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <!--
+      The app is shared; only Services/AppPlatform.cs names a platform project.
+      On Windows it builds for Windows and takes Helpers.Windows. Anywhere else,
+      or with -p:HelpersTarget=other, it builds without it, which proves the
+      shared code stands by itself.
+    -->
+    <HelpersTarget Condition="'$(HelpersTarget)' == '' and $([MSBuild]::IsOSPlatform('Windows'))">windows</HelpersTarget>
+    <HelpersTarget Condition="'$(HelpersTarget)' == ''">other</HelpersTarget>
+    <TargetFramework Condition="'$(HelpersTarget)' == 'windows'">net10.0-windows</TargetFramework>
+    <TargetFramework Condition="'$(HelpersTarget)' != 'windows'">net10.0</TargetFramework>
     <!-- The program is Unmuddle.exe; the code keeps its working title in namespaces. -->
     <AssemblyName>Unmuddle</AssemblyName>
     <RootNamespace>Helpers.App</RootNamespace>
@@ -29,6 +38,9 @@
     <ProjectReference Include="..\Helpers.Core\Helpers.Core.csproj" />
     <ProjectReference Include="..\Helpers.Speech\Helpers.Speech.csproj" />
     <ProjectReference Include="..\Helpers.Ai\Helpers.Ai.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(HelpersTarget)' == 'windows'">
     <ProjectReference Include="..\Helpers.Windows\Helpers.Windows.csproj" />
   </ItemGroup>
 

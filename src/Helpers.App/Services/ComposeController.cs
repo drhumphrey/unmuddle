@@ -5,8 +5,7 @@ using Helpers.App.Windows;
 using Helpers.Core.Capture;
 using Helpers.Core.Settings;
 using Helpers.Core.Spelling;
-using Helpers.Windows;
-using Helpers.Windows.Spelling;
+using Helpers.Core.Platform;
 
 namespace Helpers.App.Services;
 
@@ -18,12 +17,13 @@ public sealed class ComposeController : IDisposable
 {
     private static readonly TimeSpan PickTimeout = TimeSpan.FromSeconds(20);
 
+    private readonly IPlatform _platform = AppPlatform.Current;
     private readonly SettingsStore _settings;
     private readonly ReadingController _reading;
     private readonly ToastService _toasts;
     private readonly DraftSpelling _spelling;
     private ComposeWindow? _window;
-    private TargetWindow? _target;
+    private ITargetWindow? _target;
     private CancellationTokenSource? _picking;
     private bool _sending;
 
@@ -41,7 +41,7 @@ public sealed class ComposeController : IDisposable
 
         var dictionary = new UserDictionary(Path.Combine(SettingsStore.DefaultFolder(), "dictionary.txt"));
         dictionary.Load();
-        _spelling = new DraftSpelling(new WindowsSpellChecker("en-GB"), dictionary);
+        _spelling = new DraftSpelling(_platform.CreateSpellChecker("en-GB"), dictionary);
     }
 
     /// <summary>True when Windows has an English (UK) checker, for the settings page.</summary>
@@ -55,7 +55,7 @@ public sealed class ComposeController : IDisposable
     /// </summary>
     public void Open()
     {
-        var candidate = TargetWindow.FromForeground();
+        var candidate = _platform.Windows.Target(_platform.Windows.Foreground);
         if (candidate is not null)
         {
             _target = candidate;
@@ -90,7 +90,7 @@ public sealed class ComposeController : IDisposable
     /// Any unsent draft is replaced through the editor's undo, so Ctrl+Z
     /// brings it back.
     /// </summary>
-    public void OpenWith(string text, TargetWindow? source)
+    public void OpenWith(string text, ITargetWindow? source)
     {
         if (source is not null)
         {
@@ -147,7 +147,7 @@ public sealed class ComposeController : IDisposable
         window.ReadBackRequested += ReadBack;
         window.LookupRequested += word =>
         {
-            var (x, y) = CursorPosition.Get();
+            var (x, y) = _platform.Pointer.Position;
             _words.Show(word, new PixelPoint(x, y));
         };
         window.CopyRequested += text => Copy(text, announce: true);
@@ -178,7 +178,7 @@ public sealed class ComposeController : IDisposable
             window.Height = h;
         }
 
-        var (x, y) = CursorPosition.Get();
+        var (x, y) = _platform.Pointer.Position;
         var mouseScreen = window.Screens.ScreenFromPoint(new PixelPoint(x, y)) ?? window.Screens.Primary;
 
         if (settings.ComposePlacement is { } saved)
@@ -221,7 +221,7 @@ public sealed class ComposeController : IDisposable
             return;
         }
 
-        if (ClipboardText.TrySet(text))
+        if (_platform.Clipboard.TrySetText(text))
         {
             if (announce)
             {
@@ -310,17 +310,17 @@ public sealed class ComposeController : IDisposable
         _window.ShowPicking(true);
         try
         {
-            var startedOn = ForegroundWindow.Handle;
+            var startedOn = _platform.Windows.Foreground;
             while (!_picking.IsCancellationRequested)
             {
                 await Task.Delay(100, _picking.Token);
-                var front = ForegroundWindow.Handle;
+                var front = _platform.Windows.Foreground;
                 if (front == startedOn)
                 {
                     continue;
                 }
 
-                var candidate = TargetWindow.From(front);
+                var candidate = _platform.Windows.Target(front);
                 if (candidate is null)
                 {
                     continue;

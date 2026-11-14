@@ -6,7 +6,7 @@ namespace Helpers.Windows;
 /// The first copy holds a named event; a later copy finds it already there,
 /// signals it, and should then close.
 /// </summary>
-public sealed class SingleInstance : IDisposable
+public sealed class SingleInstance : Helpers.Core.Platform.ISingleInstance
 {
     private readonly EventWaitHandle _signal;
     private Thread? _listener;

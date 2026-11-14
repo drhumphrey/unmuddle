@@ -9,7 +9,8 @@ using Helpers.App.Overlays;
 using Helpers.App.Services;
 using Helpers.Core.Settings;
 using Helpers.Speech;
-using Helpers.Windows;
+using Helpers.Core.Capture;
+using Helpers.Core.Platform;
 
 namespace Helpers.App;
 
@@ -19,9 +20,10 @@ public partial class App : Application
     private ToastService? _toasts;
     private ToastWindow? _toastWindow;
     private ReadingController? _reading;
-    private ClipboardWatcher? _clipboard;
+    private IPlatform _platform = null!;
+    private IClipboardWatcher? _clipboard;
     private HotkeyService? _hotkeys;
-    private SelectionCapture? _selection;
+    private ISelectionSource? _selection;
     private InputMonitor? _input;
     private ReadButtonService? _readButton;
     private ComposeController? _compose;
@@ -48,6 +50,7 @@ public partial class App : Application
             // No main window: the app lives in the tray and shows small surfaces when needed.
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
+            _platform = AppPlatform.Current;
             _settings = new SettingsStore();
             var settings = _settings.Load();
             Vibes.Apply(this, settings);
@@ -60,23 +63,23 @@ public partial class App : Application
             var modelsRoot = settings.ModelsFolder ?? SettingsStore.DefaultModelsFolder();
             var engine = new KokoroEngine(modelsRoot, Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
             _engine = engine;
-            _reading = new ReadingController(engine, new NAudioOutput(), _settings, _toasts);
+            _reading = new ReadingController(engine, _platform.CreateAudioOutput(), _settings, _toasts);
             _reading.SettingsRequested += ShowSettings;
 
-            _clipboard = new ClipboardWatcher();
+            _clipboard = _platform.CreateClipboardWatcher();
             _clipboard.Changed += () => Dispatcher.UIThread.Post(OfferToReadClipboard);
             if (settings.WatchClipboard)
             {
                 _clipboard.Start();
             }
 
-            _selection = new SelectionCapture();
-            _assistant = new AssistantService(_settings, new CredentialStore());
+            _selection = _platform.CreateSelectionSource();
+            _assistant = new AssistantService(_settings, _platform.Secrets);
             _words = new WordToolsService(_settings, _reading, _toasts);
             _updates = new UpdateService(_settings, _toasts);
             _updates.Start();
             _compose = new ComposeController(_settings, _reading, _toasts, _assistant, _words);
-            _hotkeys = new HotkeyService();
+            _hotkeys = new HotkeyService(_platform.Hotkeys);
             ClaimReadHotkeyAtStart();
             ApplyComposeHotkey();
 
@@ -88,7 +91,7 @@ public partial class App : Application
             }
 
             // The mouse and keyboard hooks share the hotkey's message thread.
-            _input = new InputMonitor(_hotkeys.Window);
+            _input = new InputMonitor(_platform.CreateInputEvents(), _platform.Windows);
             if (_input.Install())
             {
                 _readButton = new ReadButtonService(_input, _settings, _reading, _selection, _toasts, _compose);
@@ -130,6 +133,7 @@ public partial class App : Application
                 _hotkeys?.Dispose();
                 _clipboard?.Dispose();
                 _reading?.Dispose();
+                _platform.Dispose();
             };
 
             if (!settings.FirstRunDone)
@@ -170,7 +174,7 @@ public partial class App : Application
                 s.Updates.CheckForUpdates = updates;
                 s.Updates.Asked = true;
             });
-            if (startup != StartupRegistration.IsEnabled())
+            if (startup != AppPlatform.Current.Startup.IsEnabled())
             {
                 SetStartWithWindows(startup);
             }
@@ -285,7 +289,7 @@ public partial class App : Application
         var store = new SettingsStore(Path.Combine(Path.GetTempPath(), "helpers-ai-test-settings.json"));
         store.Load();
         store.Update(s => s.Ai.Provider = Helpers.Core.Ai.AiProvider.Local);
-        using var service = new AssistantService(store, new CredentialStore());
+        using var service = new AssistantService(store, AppPlatform.Current.Secrets);
         var log = new System.Text.StringBuilder();
         try
         {
@@ -356,8 +360,8 @@ public partial class App : Application
         _calmItem = new NativeMenuItem("Calm look") { ToggleType = MenuItemToggleType.CheckBox, IsChecked = settings.Vibe == Vibe.Calm };
         _calmItem.Click += (_, _) => ToggleCalm();
 
-        _startupItem = new NativeMenuItem("Start with Windows") { ToggleType = MenuItemToggleType.CheckBox, IsChecked = StartupRegistration.IsEnabled() };
-        _startupItem.Click += (_, _) => SetStartWithWindows(!StartupRegistration.IsEnabled());
+        _startupItem = new NativeMenuItem("Start with Windows") { ToggleType = MenuItemToggleType.CheckBox, IsChecked = AppPlatform.Current.Startup.IsEnabled() };
+        _startupItem.Click += (_, _) => SetStartWithWindows(!AppPlatform.Current.Startup.IsEnabled());
 
         var memory = new NativeMenuItem("Memory in use");
         memory.Click += (_, _) => ShowMemory();
@@ -476,14 +480,14 @@ public partial class App : Application
             new QuickMenuItem("Watch clipboard", ToggleWatchClipboard, () => _settings.Current.WatchClipboard),
             new QuickMenuItem("Pause the Read button for 1 hour", TogglePillPause, () => _readButton?.IsPaused ?? false),
             new QuickMenuItem("Calm look", ToggleCalm, () => _settings.Current.Vibe == Vibe.Calm),
-            new QuickMenuItem("Start with Windows", () => SetStartWithWindows(!StartupRegistration.IsEnabled()), StartupRegistration.IsEnabled),
+            new QuickMenuItem("Start with Windows", () => SetStartWithWindows(!AppPlatform.Current.Startup.IsEnabled()), AppPlatform.Current.Startup.IsEnabled),
             QuickMenuItem.Separator,
             new QuickMenuItem("Settings…", ShowSettings),
             new QuickMenuItem("Memory in use", ShowMemory),
             new QuickMenuItem("Exit", () => (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown()),
         ]);
 
-        var (x, y) = CursorPosition.Get();
+        var (x, y) = AppPlatform.Current.Pointer.Position;
         _quickMenu.ShowNear(new PixelPoint(x, y));
     }
 
@@ -492,8 +496,8 @@ public partial class App : Application
     /// <summary>Registers or removes the Run key entry and keeps the menus and settings in step. Returns false if Windows refused.</summary>
     private bool SetStartWithWindows(bool enabled)
     {
-        var ok = StartupRegistration.SetEnabled(enabled);
-        var now = StartupRegistration.IsEnabled();
+        var ok = AppPlatform.Current.Startup.SetEnabled(enabled);
+        var now = AppPlatform.Current.Startup.IsEnabled();
         _settings?.Update(s => s.StartWithWindows = now);
         if (_startupItem is not null)
         {
@@ -554,7 +558,7 @@ public partial class App : Application
             return;
         }
 
-        var text = ClipboardText.TryGet();
+        var text = AppPlatform.Current.Clipboard.TryGetText();
         if (string.IsNullOrWhiteSpace(text))
         {
             return;
@@ -774,7 +778,7 @@ public partial class App : Application
                 ApplyReadButtonHotkey,
                 () => ReadableText.Apply(this, _settings.Current),
                 SetStartWithWindows,
-                StartupRegistration.IsEnabled(),
+                AppPlatform.Current.Startup.IsEnabled(),
                 _assistant!,
                 _updates!)
             {

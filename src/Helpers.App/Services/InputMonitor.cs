@@ -1,25 +1,27 @@
 using Avalonia.Threading;
 using Helpers.Core.Input;
-using Helpers.Windows;
+using Helpers.Core.Platform;
 
 namespace Helpers.App.Services;
 
 /// <summary>
-/// Owns the low-level hooks and re-raises their events on the UI thread,
+/// Owns the system's mouse and key events and re-raises them on the UI thread,
 /// each tagged with whether the mouse was over one of our own windows.
 /// The Read button and the quick menu both listen here.
 /// </summary>
 public sealed class InputMonitor : IDisposable
 {
-    private readonly InputHooks _hooks;
+    private readonly IInputEvents _events;
+    private readonly IDesktopWindows _windows;
 
-    public InputMonitor(MessageWindow thread)
+    public InputMonitor(IInputEvents events, IDesktopWindows windows)
     {
-        _hooks = new InputHooks(thread);
-        _hooks.MouseDown += (button, point, time) => Dispatcher.UIThread.Post(() => MouseDown?.Invoke(button, point, time, IsOurs(point)));
-        _hooks.MouseUp += (button, point, time) => Dispatcher.UIThread.Post(() => MouseUp?.Invoke(button, point, time, IsOurs(point)));
-        _hooks.Wheel += () => Dispatcher.UIThread.Post(() => Wheel?.Invoke());
-        _hooks.KeyPressed += () => Dispatcher.UIThread.Post(() => KeyPressed?.Invoke());
+        _events = events;
+        _windows = windows;
+        _events.MouseDown += (button, point, time) => Dispatcher.UIThread.Post(() => MouseDown?.Invoke(button, point, time, IsOurs(point)));
+        _events.MouseUp += (button, point, time) => Dispatcher.UIThread.Post(() => MouseUp?.Invoke(button, point, time, IsOurs(point)));
+        _events.Wheel += () => Dispatcher.UIThread.Post(() => Wheel?.Invoke());
+        _events.KeyPressed += () => Dispatcher.UIThread.Post(() => KeyPressed?.Invoke());
     }
 
     /// <summary>Button, screen point, timestamp, and whether the point is over one of this app's windows.</summary>
@@ -31,11 +33,11 @@ public sealed class InputMonitor : IDisposable
 
     public event Action? KeyPressed;
 
-    public bool IsInstalled => _hooks.IsInstalled;
+    public bool IsInstalled => _events.IsInstalled;
 
-    public bool Install() => _hooks.Install();
+    public bool Install() => _events.Install();
 
-    public void Dispose() => _hooks.Dispose();
+    public void Dispose() => _events.Dispose();
 
-    private static bool IsOurs(GesturePoint point) => WindowAtPoint.BelongsToThisProcess(WindowAtPoint.Handle(point.X, point.Y));
+    private bool IsOurs(GesturePoint point) => _windows.IsOurs(_windows.At(point.X, point.Y));
 }

@@ -34,4 +34,10 @@ public interface ITargetWindow
     bool IsAlive { get; }
 
     Task<PasteOutcome> PasteAsync(string text, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Pastes whatever is on the clipboard already, over the selection in this
+    /// window. The clipboard is the user's, so it is left alone.
+    /// </summary>
+    Task<PasteOutcome> PasteClipboardAsync(CancellationToken cancellationToken);
 }

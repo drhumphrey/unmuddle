@@ -192,7 +192,7 @@ public sealed class ReadingController : IDisposable
 
     public void ReadClipboard()
     {
-        var text = Helpers.Windows.ClipboardText.TryGet();
+        var text = AppPlatform.Current.Clipboard.TryGetText();
         if (string.IsNullOrWhiteSpace(text))
         {
             _toasts.Info("Nothing on the clipboard to read");

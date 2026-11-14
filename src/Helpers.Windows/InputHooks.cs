@@ -9,7 +9,7 @@ namespace Helpers.Windows;
 /// silently remove the hook. Key events carry no key code: the app only needs
 /// to know that a key was pressed, and never logs what.
 /// </summary>
-public sealed class InputHooks : IDisposable
+public sealed class InputHooks : Helpers.Core.Platform.IInputEvents
 {
     private const int WH_KEYBOARD_LL = 13;
     private const int WH_MOUSE_LL = 14;

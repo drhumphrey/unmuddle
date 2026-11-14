@@ -380,4 +380,22 @@ Dave: the pop-up by the clock should show a little play icon when something is b
 
 **Tried on Dave's PC:** `--reading-icon` saved the icon as a picture: the app icon decodes and the mark is clear at 64 pixels. Settings were backed up, the voice muted for the run, and the settings put back byte for byte.
 
-**Not tried:** the icon in the tray itself at its real size, and the menu while reading. The tray isn't one of the app's own windows, so no picture was taken of it.
+**Not tried:** the icon in the tray itself at its real size, and the menu while reading. The tray isn't one of the app's own windows, so no picture was taken of it.## macOS, step 1: the app stops calling Windows directly (14 November 2026)
+
+Dave asked whether the Mac version could start now, using the logic from the Windows one. The brief allows it once v0.2 is out (milestone 11). He has a Mac to test on later, wants it kept open source and off the Mac App Store, and asked whether the code needs a Windows folder and a macOS folder. It doesn't: most of the code is shared, and each platform already gets one project (`Helpers.Windows` now, `Helpers.Mac` to come).
+
+The brief says `Helpers.App` carries over unchanged. It didn't quite: ten of its files called `Helpers.Windows` classes by name, and the project built for Windows only. This step removes that, on Windows, with no change to what the app does.
+
+- **`IPlatform`** in Core (`Platform/IPlatform.cs`) lists everything the app asks of the operating system: the secret store, the clipboard and its watcher, the mouse pointer, other programs' windows, global shortcuts, mouse and key events, start-up registration, audio output, selection capture, the spell checker, the single-copy claim, reduced motion, whether the installer put this copy here, and making an overlay non-activating. Another program's window is passed about as an opaque number that only the platform understands.
+- **`WindowsPlatform`** in `Helpers.Windows` answers all of it by handing on to the classes that were already there. It owns the one message window that the shortcuts and the hooks share.
+- **`AppPlatform`** in the app is the only file that names a platform project. The rest ask `AppPlatform.Current`.
+- **`ITargetWindow`** gained `PasteClipboardAsync`, which the Read button's Paste uses.
+- **The app's project** builds for Windows on Windows, as before. With `-p:HelpersTarget=other` it builds as plain .NET with `Helpers.Windows` left out.
+
+**Tried on Dave's PC:** 283 Core and 10 Windows tests pass; five of the Windows ones are new, for `WindowsPlatform`. The app builds both ways. The new build, started on Dave's settings, held all three shortcuts and let them go when stopped; a second copy stepped aside and the first stayed. Settings were put back byte for byte and the installed copy restarted.
+
+**Not tried:** the Read button, Compose's Send to chat and spelling, and the player by hand in this build. The code they run is the same; only the way it is reached has changed. Dave to give it a normal day's use before it is released.
+
+**Did not go to plan:** nothing broke. The step exists at all because the brief's "carries over unchanged" was optimistic.
+
+**Left for the Mac:** see STATUS.md, "Started: macOS".

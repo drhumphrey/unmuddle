@@ -40,13 +40,13 @@ The Windows spell checker needs Windows' English (United Kingdom) language featu
 
 | Folder | What's in it |
 |---|---|
-| `src/Helpers.Core` | Everything platform-free: text clean-up, Markdown, sentences, numbers said naturally, pronunciations, spelling logic, the AI prompts and notes parser, the word tools, updates, settings. Every part is unit-tested. |
+| `src/Helpers.Core` | Everything platform-free: the list of what the app asks of the operating system (`Platform/IPlatform.cs`), text clean-up, Markdown, sentences, numbers said naturally, pronunciations, spelling logic, the AI prompts and notes parser, the word tools, updates, settings. Every part is unit-tested. |
 | `src/Helpers.Speech` | The Kokoro voice through sherpa-onnx, and its download. |
 | `src/Helpers.Ai` | The local model through LLamaSharp, Claude through the Anthropic SDK, and the local model catalogue and download. |
-| `src/Helpers.Windows` | Windows-only parts: selection capture (UI Automation, then the clipboard), the mouse and keyboard hooks, the hotkey window, pasting into other windows, the spell checker, Credential Manager, start-up registration. |
-| `src/Helpers.App` | The Avalonia app. `Overlays/` never take focus (Read button, player, toasts, quick menu). `Windows/` are normal windows built on `ShellWindow` (Compose, Settings, Welcome, word tools, updates). `Services/` holds the controllers. `Themes/` holds the vibes and the shared control styles. |
+| `src/Helpers.Windows` | Windows-only parts: selection capture (UI Automation, then the clipboard), the mouse and keyboard hooks, the hotkey window, pasting into other windows, the spell checker, Credential Manager, start-up registration. `WindowsPlatform` hands them all to the app through `IPlatform`. |
+| `src/Helpers.App` | The Avalonia app, shared by every platform. Only `Services/AppPlatform.cs` names a platform project; everything else asks `AppPlatform.Current`. `Overlays/` never take focus (Read button, player, toasts, quick menu). `Windows/` are normal windows built on `ShellWindow` (Compose, Settings, Welcome, word tools, updates). `Services/` holds the controllers. `Themes/` holds the vibes and the shared control styles. |
 | `tests/Helpers.Tests` | Unit tests for Core. `Fixtures/` holds real AI replies used as reading tests. |
-| `tests/Helpers.Windows.Tests` | Tests against the real Windows spell checker. They do nothing on a PC without UK English. |
+| `tests/Helpers.Windows.Tests` | Tests against the real Windows spell checker (they do nothing on a PC without UK English), the single-copy claim and `WindowsPlatform`. |
 | `tools/EngineSpike` | Reads a paragraph with two voices and prints timings and memory. |
 | `tools/ReadingDump` | Prints what the reader would say for a file. Handy when a reply reads oddly. |
 | `tools/screenshots` | Scripts that capture the app's own windows for the README. See its README. |
@@ -63,6 +63,14 @@ The Windows spell checker needs Windows' English (United Kingdom) language featu
 | Claude API key | Windows Credential Manager, generic credential `Unmuddle/anthropic-api-key` |
 | Start with Windows | `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, value `Unmuddle` |
 | Installed app | `%LOCALAPPDATA%\Programs\Unmuddle` (where the installer puts it) |
+
+**Keeping the app free of Windows.** The app must build without `Helpers.Windows`, so that a Mac version is a new platform project and not a rewrite. To check, build it with the Windows project left out:
+
+```
+dotnet build src/Helpers.App -p:HelpersTarget=other
+```
+
+It should build with no errors. That copy won't run, because nothing answers for the platform; the check is that the shared code compiles alone. Anything new that needs the operating system goes on `IPlatform` in Core, with its Windows answer in `Helpers.Windows`.
 
 Copies from the Helpers days used the same places under the name Helpers. On every start, before anything reads its settings, `Program.Main` moves them across: both folders (only if the new one doesn't exist yet), the saved Claude key (the old one is removed once the new one is saved), and the start-up entry. The installer keeps the old AppId, so it replaces a Helpers install, and it removes the old program folder and Start menu folder.
 

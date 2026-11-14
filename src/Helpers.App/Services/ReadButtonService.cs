@@ -4,7 +4,7 @@ using Helpers.App.Overlays;
 using Helpers.Core.Capture;
 using Helpers.Core.Input;
 using Helpers.Core.Settings;
-using Helpers.Windows;
+using Helpers.Core.Platform;
 
 namespace Helpers.App.Services;
 
@@ -16,6 +16,7 @@ namespace Helpers.App.Services;
 public sealed class ReadButtonService : IDisposable
 {
     private readonly SelectionGestureDetector _detector = new();
+    private readonly IPlatform _platform = AppPlatform.Current;
     private readonly InputMonitor _input;
     private readonly SettingsStore _settings;
     private readonly ReadingController _reading;
@@ -64,9 +65,9 @@ public sealed class ReadButtonService : IDisposable
     /// </summary>
     public void ShowOnRequest()
     {
-        var (x, y) = CursorPosition.Get();
+        var (x, y) = _platform.Pointer.Position;
         _pendingPoint = new GesturePoint(x, y);
-        _pendingWindow = ForegroundWindow.Handle;
+        _pendingWindow = _platform.Windows.Foreground;
 
         // The shortcut's own keys are still down, and repeat while held. They mustn't hide what they just showed.
         _ignoreKeysSince = Environment.TickCount64;
@@ -116,9 +117,9 @@ public sealed class ReadButtonService : IDisposable
             return;
         }
 
-        _pressedWindow = WindowAtPoint.TopLevelHandle(point.X, point.Y);
+        _pressedWindow = _platform.Windows.TopLevelAt(point.X, point.Y);
         _pressedPoint = point;
-        _pressedPointer = CursorShape.Current();
+        _pressedPointer = _platform.Pointer.Shape;
         _detector.MouseDown(button, point, time);
     }
 
@@ -140,26 +141,26 @@ public sealed class ReadButtonService : IDisposable
         }
 
         // The ordinary arrow at both ends: opening a file, dragging one, or a box around several. Not text.
-        if (!PointerShapes.CouldBeTextSelection(_pressedPointer, CursorShape.Current()))
+        if (!PointerShapes.CouldBeTextSelection(_pressedPointer, _platform.Pointer.Shape))
         {
             return;
         }
 
         // Released over a different window than pressed: a window or file drag, not a selection.
-        var releasedWindow = WindowAtPoint.TopLevelHandle(point.X, point.Y);
+        var releasedWindow = _platform.Windows.TopLevelAt(point.X, point.Y);
         if (releasedWindow == 0 || releasedWindow != _pressedWindow)
         {
             return;
         }
 
         // Pressed on a title bar, border or scrollbar: a drag, not a selection.
-        if (WindowAtPoint.IsOnFrame(WindowAtPoint.Handle(_pressedPoint.X, _pressedPoint.Y), _pressedPoint.X, _pressedPoint.Y))
+        if (_platform.Windows.IsOnFrame(_platform.Windows.At(_pressedPoint.X, _pressedPoint.Y), _pressedPoint.X, _pressedPoint.Y))
         {
             return;
         }
 
         // Dragging out a snip looks just like selecting text; never offer to read a screenshot.
-        var process = WindowAtPoint.ProcessName(releasedWindow);
+        var process = _platform.Windows.ProcessName(releasedWindow);
         if (KnownApps.IsScreenCaptureTool(process)
             || _settings.Current.ExcludedApps.Any(app => string.Equals(app, process, StringComparison.OrdinalIgnoreCase)))
         {
@@ -179,16 +180,16 @@ public sealed class ReadButtonService : IDisposable
     {
         _showTimer.Stop();
         _pill ??= CreatePill();
-        var canPaste = !string.IsNullOrEmpty(ClipboardText.TryGet());
+        var canPaste = !string.IsNullOrEmpty(_platform.Clipboard.TryGetText());
         _pill.ShowAt(new PixelPoint(_pendingPoint.X, _pendingPoint.Y), life, canPaste);
     }
 
     /// <summary>Shows the pill at the mouse as if a selection had just been made. A dev switch, for looking at it.</summary>
     public void ShowForPreview()
     {
-        var (x, y) = CursorPosition.Get();
+        var (x, y) = _platform.Pointer.Position;
         _pendingPoint = new GesturePoint(x, y);
-        _pendingWindow = WindowAtPoint.TopLevelHandle(x, y);
+        _pendingWindow = _platform.Windows.TopLevelAt(x, y);
         ShowPill();
     }
 
@@ -217,7 +218,7 @@ public sealed class ReadButtonService : IDisposable
     /// <summary>Edit: grab the selection the same way Read does, then open it in Compose, sending back to its window.</summary>
     private async Task EditAsync()
     {
-        var source = TargetWindow.From(_pendingWindow);
+        var source = _platform.Windows.Target(_pendingWindow);
         SelectionResult result;
         try
         {
@@ -252,7 +253,7 @@ public sealed class ReadButtonService : IDisposable
     /// <summary>Paste: the clipboard over the selection, in the window the selection was made in.</summary>
     private async Task PasteAsync()
     {
-        var target = TargetWindow.From(_pendingWindow);
+        var target = _platform.Windows.Target(_pendingWindow);
         if (target is null)
         {
             _toasts.Info("That window has gone");

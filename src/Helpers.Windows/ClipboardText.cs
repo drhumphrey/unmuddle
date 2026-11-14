@@ -143,7 +143,7 @@ public static class ClipboardText
 }
 
 /// <summary>Raises an event whenever the clipboard changes, by polling its sequence number.</summary>
-public sealed class ClipboardWatcher : IDisposable
+public sealed class ClipboardWatcher : Helpers.Core.Platform.IClipboardWatcher
 {
     private readonly Timer _timer;
     private readonly object _sync = new();

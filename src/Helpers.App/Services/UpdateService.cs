@@ -6,7 +6,6 @@ using Avalonia.Threading;
 using Helpers.App.Windows;
 using Helpers.Core.Settings;
 using Helpers.Core.Updates;
-using Helpers.Windows;
 
 namespace Helpers.App.Services;
 
@@ -161,7 +160,7 @@ public sealed class UpdateService : IDisposable
             _window.Closed += (_, _) => _window = null;
         }
 
-        _window.Show(info, CurrentVersion, InstallerRegistration.IsInstalled());
+        _window.Show(info, CurrentVersion, AppPlatform.Current.IsInstalled);
     }
 
     /// <summary>Downloads the installer, checks it against the checksum, runs it silently, and starts the new version.</summary>

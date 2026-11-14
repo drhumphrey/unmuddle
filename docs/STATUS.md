@@ -21,7 +21,7 @@ The app is now called **Unmuddle**, "making sense of what you read and write" (1
 | 10 | Claude provider, key storage, cost shown, first-use confirmation | Built early, as part of 9 |
 | Extras | Word tools, Privacy and licences page, opt-in update check, code scanning, Dependabot, a how-to guide with pictures ([GUIDE.md](GUIDE.md)) | Done |
 
-267 Core tests and 3 Windows tests pass, on both PCs. Every push builds and is scanned on GitHub.
+283 Core tests and 10 Windows tests pass on Dave's PC. Every push builds and is scanned on GitHub.
 
 ## Tried by the maintainer
 
@@ -53,6 +53,18 @@ From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail i
 
 - Closing the player stops the voice. Built; Dave still to try it.
 - A play mark on the tray icon, and in the Unmuddle menu, while the voice is reading. The icon was drawn and looked at; the tray and the menu themselves are Dave's to check.
+
+## Started: macOS (milestone 11)
+
+Dave asked for it on 14 November 2026. He has a Mac to test on later. It will be shared as a `.dmg` on the Releases page, not through the Mac App Store, and stays open source.
+
+- **Step 1, done, on the `macos` branch only:** the app no longer calls Windows code directly. Everything it asks of the operating system goes through `IPlatform` in Core, which `Helpers.Windows` answers. The app builds with the Windows project left out. Nothing a user sees has changed.
+- **Windows stays frozen.** Dave, 14 November 2026: the Windows version is working well, so `main` stays as released. Mac work lives on the `macos` branch and comes into `main` only once the Mac version works and Dave has tried both. Fixes made on `main` in the meantime get merged into `macos`.
+- **Step 2, needs the Mac:** a `Helpers.Mac` project. First the menu bar icon, the player and Read clipboard, which need little Mac-only code.
+- **Step 3:** the selection, the shortcuts and the Read button. These need the Accessibility permission.
+- **Step 4:** spelling, pasting from Compose, the key store, start at sign-in, and the `.dmg`.
+- **Still Windows-only inside the shared app,** to sort out on the Mac: the updater (it downloads and runs the Windows installer), the link to Windows' language settings in Compose, the words "Start with Windows" and "by the clock", the Segoe UI fallback font, and shortcut names in Ctrl and Alt.
+- **Open:** whether to pay for an Apple Developer membership. Without it the app runs, but macOS blocks the first open until the user allows it in System Settings.
 
 ## Not tried yet
 
@@ -97,7 +109,7 @@ From Dave's use of 0.2.0, 13 November 2026. Version 0.2.1 carries them. Detail i
 5. **Code signing.** Unsigned for now, with build attestations instead. Apply to SignPath once Unmuddle has visible use ([CODE-SIGNING.md](CODE-SIGNING.md)).
 6. **Summarise and Explain simply** buttons, and the player's result card.
 7. **A browser extension** for Chrome and Edge, to put Read and Edit on the right-click menu.
-8. **macOS.**
+8. **macOS**, started: see "Started: macOS" above.
 
 ## Decisions still open
 
